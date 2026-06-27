@@ -1,6 +1,7 @@
 """
 statistics.py — Sentinel Hub Statistics API
-Extracts temporal S2 band statistics for a bounding box
+Uses ORBIT mosaicking with SCL pixel masking
+Matches GEE training pipeline: best clear pixel per dekad
 """
 from auth import get_session
 
@@ -15,7 +16,12 @@ def safe_float(val, default=None):
     except (TypeError, ValueError):
         return default
 
-def get_s2_statistics(bbox: list, start: str, end: str, interval: str = "P10D") -> list:
+def get_s2_statistics(bbox: list, start: str, end: str,
+                      interval: str = "P10D") -> list:
+    """
+    Get S2 indices with ORBIT mosaicking and SCL cloud masking.
+    Best clear pixel selected per dekad — matches GEE pipeline.
+    """
     session = get_session()
 
     payload = {
@@ -25,34 +31,57 @@ def get_s2_statistics(bbox: list, start: str, end: str, interval: str = "P10D") 
                       "dataFilter": {
                           "timeRange": {"from": start, "to": end},
                           "maxCloudCoverage": 90
-                      }}]
+                      },
+                      "processing": {"harmonizeValues": True}}]
         },
         "aggregation": {
             "timeRange": {"from": start, "to": end},
             "aggregationInterval": {"of": interval},
+            "resampling": "NEAREST",
             "evalscript": """
 //VERSION=3
 function setup() {
   return {
-    input: [{bands: ["B02","B03","B04","B05","B08","B8A","B11","dataMask"]}],
+    input: [{bands:["B02","B03","B04","B05","B08","B8A","B11","SCL","dataMask"],
+             units:["REFLECTANCE","REFLECTANCE","REFLECTANCE","REFLECTANCE",
+                    "REFLECTANCE","REFLECTANCE","REFLECTANCE","DN","DN"]}],
     output: [
-      {id: "indices", bands: 5, sampleType: "FLOAT32"},
-      {id: "dataMask", bands: 1, sampleType: "UINT8"}
-    ]
+      {id:"indices",  bands:5, sampleType:"FLOAT32"},
+      {id:"dataMask", bands:1, sampleType:"UINT8"}
+    ],
+    mosaicking: "ORBIT"
   };
 }
-function evaluatePixel(s) {
-  let eps = 1e-8;
-  let ndvi = (s.B08 - s.B04) / (s.B08 + s.B04 + eps);
-  let ndre = (s.B08 - s.B05) / (s.B08 + s.B05 + eps);
-  let denom = s.B08 + 6*s.B04 - 7.5*s.B02 + 1;
-  let evi  = Math.abs(denom) > eps ? 2.5*(s.B08-s.B04)/denom : 0;
+function evaluatePixel(samples) {
+  var best = null;
+  var best_ndvi = -999;
+  for (var i=0; i<samples.length; i++) {
+    var s = samples[i];
+    var scl = s.SCL;
+    var clear = (scl!=0&&scl!=1&&scl!=2&&scl!=3&&
+                 scl!=8&&scl!=9&&scl!=10);
+    if (clear && s.dataMask==1 && s.B04<=1.0 && s.B08<=1.0) {
+      var ndvi = (s.B08-s.B04)/(s.B08+s.B04+1e-8);
+      if (ndvi > best_ndvi) {
+        best_ndvi = ndvi;
+        best = s;
+      }
+    }
+  }
+  if (!best) {
+    return {indices:[NaN,NaN,NaN,NaN,NaN], dataMask:[0]};
+  }
+  var eps = 1e-8;
+  var ndvi = (best.B08-best.B04)/(best.B08+best.B04+eps);
+  var ndre = (best.B08-best.B05)/(best.B08+best.B05+eps);
+  var d    = best.B08+6*best.B04-7.5*best.B02+1;
+  var evi  = Math.abs(d)>eps ? 2.5*(best.B08-best.B04)/d : 0;
   evi = Math.max(-1, Math.min(1, evi));
-  let ndwi = (s.B03 - s.B08) / (s.B03 + s.B08 + eps);
-  let ndii = (s.B8A - s.B11) / (s.B8A + s.B11 + eps);
+  var ndwi = (best.B03-best.B08)/(best.B03+best.B08+eps);
+  var ndii = (best.B8A-best.B11)/(best.B8A+best.B11+eps);
   return {
-    indices: [ndvi, ndre, evi, ndwi, ndii],
-    dataMask: [s.dataMask]
+    indices:  [ndvi, ndre, evi, ndwi, ndii],
+    dataMask: [1]
   };
 }
 """
@@ -66,7 +95,7 @@ function evaluatePixel(s) {
         }
     }
 
-    r = session.post(SH_STATS_URL, json=payload, timeout=60)
+    r = session.post(SH_STATS_URL, json=payload, timeout=90)
     if r.status_code != 200:
         print(f"Error {r.status_code}: {r.text[:200]}")
         return []
@@ -75,9 +104,12 @@ function evaluatePixel(s) {
     for item in r.json().get('data', []):
         date = item['interval']['from'][:10]
         bands = item['outputs']['indices']['bands']
+        ndvi = safe_float(bands['B0']['stats'].get('mean'))
+        if ndvi is None:
+            continue
         results.append({
             'date': date,
-            'NDVI': safe_float(bands['B0']['stats'].get('mean')),
+            'NDVI': ndvi,
             'NDRE': safe_float(bands['B1']['stats'].get('mean')),
             'EVI':  safe_float(bands['B2']['stats'].get('mean')),
             'NDWI': safe_float(bands['B3']['stats'].get('mean')),
@@ -87,13 +119,22 @@ function evaluatePixel(s) {
     return results
 
 if __name__ == '__main__':
-    bbox = [-6.96, 52.82, -6.90, 52.86]
+    import json
+    with open('lpis_2024_unique.json') as f:
+        parcels = json.load(f)
+    p = next(x for x in parcels if x['crop'] == 'Spring Barley')
+    coords = p['geometry']['coordinates'][0]
+    lngs = [c[0] for c in coords]
+    lats = [c[1] for c in coords]
+    bbox = [min(lngs), min(lats), max(lngs), max(lats)]
+
+    print("Testing ORBIT mosaicking with SCL masking...")
     results = get_s2_statistics(
         bbox,
-        "2024-04-01T00:00:00Z",
-        "2024-09-30T23:59:59Z"
+        "2024-01-01T00:00:00Z",
+        "2024-11-21T23:59:59Z"
     )
-    print(f"\nS2 statistics: {len(results)} dekads")
+    print(f"\nValid dekads: {len(results)}")
     print(f"\n{'Date':<12} {'NDVI':>7} {'NDRE':>7} {'EVI':>7} {'NDWI':>7} {'NDII':>7}")
     print("-" * 55)
     for r in results:
