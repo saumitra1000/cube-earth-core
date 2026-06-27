@@ -1,6 +1,6 @@
 """
 sar.py — Sentinel-1 SAR statistics
-Extracts VV, VH, RVI, VHVV for a bounding box over a time range
+Returns VV, VH in dB scale to match GEE training data
 """
 from auth import get_session
 
@@ -16,10 +16,6 @@ def safe_float(val, default=None):
         return default
 
 def get_s1_statistics(bbox: list, start: str, end: str, interval: str = "P10D") -> list:
-    """
-    Get S1 SAR statistics for a bounding box over a time range.
-    Returns list of {date, VV, VH, RVI, VHVV}
-    """
     session = get_session()
 
     payload = {
@@ -51,15 +47,16 @@ function setup() {
   };
 }
 function evaluatePixel(s) {
-  let eps = 1e-8;
-  let vv = s.VV;
-  let vh = s.VH;
-  let vv_lin = Math.pow(10, vv/10);
-  let vh_lin = Math.pow(10, vh/10);
-  let rvi  = (4 * vh_lin) / (vv_lin + vh_lin + eps);
-  let vhvv = vh - vv;
+  let eps = 1e-10;
+  // Convert linear to dB to match GEE training data
+  let vv_db   = 10 * Math.log10(s.VV + eps);
+  let vh_db   = 10 * Math.log10(s.VH + eps);
+  // RVI from linear
+  let rvi     = (4 * s.VH) / (s.VV + s.VH + eps);
+  // VHVV in dB
+  let vhvv_db = vh_db - vv_db;
   return {
-    sar: [vv, vh, rvi, vhvv],
+    sar: [vv_db, vh_db, rvi, vhvv_db],
     dataMask: [s.dataMask]
   };
 }
@@ -101,8 +98,8 @@ if __name__ == '__main__':
         "2024-09-30T23:59:59Z"
     )
     print(f"\nS1 statistics: {len(results)} dekads")
-    print(f"\n{'Date':<12} {'VV':>7} {'VH':>7} {'RVI':>7} {'VHVV':>7}")
-    print("-" * 44)
+    print(f"\n{'Date':<12} {'VV(dB)':>8} {'VH(dB)':>8} {'RVI':>7} {'VHVV':>7}")
+    print("-" * 48)
     for r in results:
-        def fmt(v): return f"{v:>7.4f}" if v is not None else "   None"
+        def fmt(v): return f"{v:>8.3f}" if v is not None else "    None"
         print(f"{r['date']:<12}{fmt(r['VV'])}{fmt(r['VH'])}{fmt(r['RVI'])}{fmt(r['VHVV'])}")
