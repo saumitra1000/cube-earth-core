@@ -103,3 +103,20 @@ if __name__ == '__main__':
     for r in results:
         def fmt(v): return f"{v:>8.3f}" if v is not None else "    None"
         print(f"{r['date']:<12}{fmt(r['VV'])}{fmt(r['VH'])}{fmt(r['RVI'])}{fmt(r['VHVV'])}")
+
+
+def compute_dprvic(vv_db: float, vh_db: float) -> float:
+    """
+    Dual-pol Radar Vegetation Index for C-band (DpRVIc)
+    Input: VV and VH in dB scale
+    Output: DpRVIc 0-1
+    """
+    if vv_db is None or vh_db is None:
+        return None
+    # Convert dB back to linear
+    vv_lin = 10 ** (vv_db / 10)
+    vh_lin = 10 ** (vh_db / 10)
+    eps = 1e-8
+    q = vh_lin / (vv_lin + eps)
+    dprvic = 1 - ((1-q)/(1+q+eps)) * (1/(1+q+eps))
+    return round(float(dprvic), 4)
