@@ -206,5 +206,22 @@
       "spring_barley_ndwi": "NDWI will differ by region due to rainfall variation",
       "winter_wheat_peak": "Peak SAR/NDVI signal in June dekads"
     }
+  },
+  "spring_beans_2026": {
+    "national_area_ha": 13400,
+    "national_yield_tha": 5.1,
+    "protein_payment_per_ha": 600,
+    "protein_aid_fund_total": "\u20ac10 million",
+    "10yr_average_area_ha": 11200,
+    "classification_notes": {
+      "challenge": "Similar timing to Spring Barley but different canopy",
+      "discriminators": [
+        "Broader leaf \u2192 higher VH backscatter",
+        "Slower NDVI rise than cereals",
+        "Different NDRE (non-grass chlorophyll)",
+        "Higher DpRVIc structural complexity"
+      ],
+      "verification_opportunity": "\u20ac600/ha protein payment based on BISS self-declaration \u2192 needs satellite verification"
+    }
   }
 }
