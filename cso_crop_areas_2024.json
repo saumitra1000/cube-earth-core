@@ -1,0 +1,54 @@
+[
+  {
+    "crop": "Total wheat, oats and barley",
+    "area_000ha": 270.8
+  },
+  {
+    "crop": "Total wheat",
+    "area_000ha": 64.4
+  },
+  {
+    "crop": "Winter wheat",
+    "area_000ha": 59.7
+  },
+  {
+    "crop": "Spring wheat",
+    "area_000ha": 4.7
+  },
+  {
+    "crop": "Total oats",
+    "area_000ha": 33.8
+  },
+  {
+    "crop": "Winter oats",
+    "area_000ha": 18.0
+  },
+  {
+    "crop": "Spring oats",
+    "area_000ha": 15.9
+  },
+  {
+    "crop": "Total barley",
+    "area_000ha": 172.6
+  },
+  {
+    "crop": "Winter barley",
+    "area_000ha": 57.3
+  },
+  {
+    "crop": "Spring barley",
+    "area_000ha": 115.3
+  },
+  {
+    "crop": "Beans and peas",
+    "area_000ha": 14.7
+  },
+  {
+    "crop": "Oilseed rape",
+    "area_000ha": 11.8
+  },
+  {
+    "crop": "Potatoes",
+    "area_000ha": 8.9
+  }
+]
