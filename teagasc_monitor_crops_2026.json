@@ -148,5 +148,42 @@
     "osr": "Already well into flowering",
     "winter_barley": "Early varieties at flag leaf, late sown at GS31",
     "source": "Teagasc Crop Report Update 4 2026"
+  },
+  "growth_stage_timeline_2026": {
+    "Winter Barley": {
+      "2026-03-26": "GS31",
+      "2026-04-14": "GS37 flag leaf",
+      "2026-05-12": "Heading/awns",
+      "2026-07-10": "HARVEST expected"
+    },
+    "Winter Wheat": {
+      "2026-03-26": "GS30-31",
+      "2026-04-14": "L3 50% stem extension",
+      "2026-05-12": "L1 100% booting",
+      "2026-07-20": "Grain fill/harvest"
+    },
+    "Winter Oats": {
+      "2026-03-26": "GS30-31",
+      "2026-04-14": "GS31-32",
+      "2026-05-12": "Flag leaf",
+      "2026-07-25": "Harvest"
+    },
+    "Spring Barley": {
+      "2026-04-20": "Sowing (Carlow 70-80% done)",
+      "2026-05-12": "Emergence",
+      "2026-06-15": "Stem extension",
+      "2026-08-01": "Harvest expected"
+    },
+    "Maize": {
+      "2026-04-20": "Not yet sown",
+      "2026-05-15": "Sowing begins",
+      "2026-07-01": "Vegetative growth",
+      "2026-09-15": "Silage harvest"
+    },
+    "OSR": {
+      "2026-04-14": "Full flowering",
+      "2026-05-12": "Pod fill",
+      "2026-07-01": "Harvest"
+    }
   }
 }
