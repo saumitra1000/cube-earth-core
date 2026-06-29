@@ -1,0 +1,48 @@
+{
+  "source": "Teagasc ConnectEd Monitor Crops 2026",
+  "url": "https://www.teagasc.ie/crops/",
+  "dates": ["2026-03-26", "2026-04-14", "2026-05-12"],
+  "validation_site": {
+    "name": "Kildalton College",
+    "county": "Kilkenny",
+    "lat": 52.3494,
+    "lng": -7.2553,
+    "crops": [
+      {
+        "crop": "Winter Wheat",
+        "variety": "Graham",
+        "drilling_date": "2025-10-14",
+        "previous_crop": "WOSR",
+        "growth_stages": {
+          "2026-03-26": "GS31",
+          "2026-04-14": "L3 50%",
+          "2026-05-12": "L1 100%"
+        },
+        "disease": "Septoria"
+      },
+      {
+        "crop": "Winter Barley",
+        "variety": "Integral",
+        "drilling_date": "2025-10-09",
+        "previous_crop": "After Oats",
+        "growth_stages": {
+          "2026-03-26": "GS31+",
+          "2026-04-14": "GS37"
+        },
+        "disease": "Clean"
+      },
+      {
+        "crop": "Winter Oats",
+        "variety": "Husky",
+        "drilling_date": "2025-10-16",
+        "previous_crop": "After Winter Wheat",
+        "growth_stages": {
+          "2026-03-26": "GS31+",
+          "2026-04-14": "GS32+"
+        },
+        "disease": "Clean"
+      }
+    ]
+  },
+  "note": "Use for SAR growth stage validation on July 1"
+}
