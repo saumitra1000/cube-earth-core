@@ -1,48 +1,122 @@
 {
-  "source": "Teagasc ConnectEd Monitor Crops 2026",
-  "url": "https://www.teagasc.ie/crops/",
-  "dates": ["2026-03-26", "2026-04-14", "2026-05-12"],
-  "validation_site": {
-    "name": "Kildalton College",
-    "county": "Kilkenny",
-    "lat": 52.3494,
-    "lng": -7.2553,
-    "crops": [
-      {
-        "crop": "Winter Wheat",
-        "variety": "Graham",
-        "drilling_date": "2025-10-14",
-        "previous_crop": "WOSR",
-        "growth_stages": {
-          "2026-03-26": "GS31",
-          "2026-04-14": "L3 50%",
-          "2026-05-12": "L1 100%"
+  "source": "Teagasc Crop Report — Current Issues 2026",
+  "url": "https://teagasccropreport.ie/reports/current-issues-2026",
+  "last_updated": "2026-05-13",
+  "validation_sites": [
+    {
+      "name": "Kildalton College",
+      "county": "Kilkenny",
+      "lat": 52.3494,
+      "lng": -7.2553,
+      "crops": [
+        {
+          "crop": "Winter Wheat",
+          "variety": "Graham",
+          "drilling_date": "2025-10-14",
+          "previous_crop": "WOSR",
+          "growth_stages": {
+            "2026-03-26": "GS31",
+            "2026-04-14": "L3 50%",
+            "2026-05-12": "L1 100% booting"
+          },
+          "disease": "Septoria"
         },
-        "disease": "Septoria"
-      },
-      {
-        "crop": "Winter Barley",
-        "variety": "Integral",
-        "drilling_date": "2025-10-09",
-        "previous_crop": "After Oats",
-        "growth_stages": {
-          "2026-03-26": "GS31+",
-          "2026-04-14": "GS37"
+        {
+          "crop": "Winter Barley",
+          "variety": "Integral",
+          "drilling_date": "2025-10-09",
+          "previous_crop": "After Oats",
+          "growth_stages": {
+            "2026-03-26": "GS31+",
+            "2026-04-14": "GS37"
+          },
+          "disease": "Clean"
         },
-        "disease": "Clean"
-      },
-      {
-        "crop": "Winter Oats",
-        "variety": "Husky",
-        "drilling_date": "2025-10-16",
-        "previous_crop": "After Winter Wheat",
-        "growth_stages": {
-          "2026-03-26": "GS31+",
-          "2026-04-14": "GS32+"
+        {
+          "crop": "Winter Oats",
+          "variety": "Husky",
+          "drilling_date": "2025-10-16",
+          "previous_crop": "After Winter Wheat",
+          "growth_stages": {
+            "2026-03-26": "GS31+",
+            "2026-04-14": "GS32+"
+          },
+          "disease": "Clean"
+        }
+      ]
+    },
+    {
+      "name": "Oak Park",
+      "county": "Carlow",
+      "lat": 52.8566,
+      "lng": -6.9239,
+      "crops": [
+        {
+          "crop": "Winter Wheat",
+          "variety": "Graham",
+          "drilling_date": "2025-10-13",
+          "previous_crop": "Beans",
+          "growth_stages": {
+            "2026-03-26": "GS30",
+            "2026-04-14": "L3 20%",
+            "2026-05-12": "L1 70%"
+          },
+          "disease": "Septoria"
         },
-        "disease": "Clean"
-      }
-    ]
+        {
+          "crop": "Winter Barley",
+          "variety": "Cassia/Orcade",
+          "drilling_date": "2025-10-10",
+          "previous_crop": "Spring Barley/Spring Oats",
+          "growth_stages": {
+            "2026-03-26": "GS29/GS30",
+            "2026-04-14": "GS31/GS32"
+          },
+          "disease": "Clean"
+        },
+        {
+          "crop": "Winter Oats",
+          "variety": "Husky",
+          "drilling_date": "2025-10-15",
+          "previous_crop": "Spring Barley",
+          "growth_stages": {
+            "2026-03-26": "GS30",
+            "2026-04-14": "GS31"
+          },
+          "disease": "Very Clean"
+        }
+      ]
+    },
+    {
+      "name": "Ballyragget",
+      "county": "Kilkenny",
+      "lat": 52.6333,
+      "lng": -7.3333,
+      "crops": [
+        {
+          "crop": "Winter Wheat",
+          "variety": "Equipe/Champion",
+          "drilling_date": "2025-10-01",
+          "previous_crop": "Beans/Beet",
+          "growth_stages": {
+            "2026-03-26": "GS29/30",
+            "2026-04-14": "L3 40%",
+            "2026-05-12": "L1 50%"
+          },
+          "disease": "Clean"
+        }
+      ]
+    }
+  ],
+  "key_observations": {
+    "winter_barley_harvest": "Bobby Miller confirmed mid-July 2026 harvest due to hot weather",
+    "nutrient_stress": "Dry May 2026 causing Mg/Mn/P deficiency in east Ireland",
+    "booting_stage": "Winter Wheat at booting (L1 100%) by May 12 — peak SAR signal expected"
   },
-  "note": "Use for SAR growth stage validation on July 1"
+  "bbch_to_date_mapping": {
+    "GS29-30": "2026-03-26",
+    "GS31-37": "2026-04-14",
+    "Booting": "2026-05-12",
+    "Harvest": "2026-07-10 to 2026-07-20"
+  }
 }
