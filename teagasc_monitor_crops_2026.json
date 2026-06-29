@@ -1,5 +1,5 @@
 {
-  "source": "Teagasc Crop Report — Current Issues 2026",
+  "source": "Teagasc Crop Report \u2014 Current Issues 2026",
   "url": "https://teagasccropreport.ie/reports/current-issues-2026",
   "last_updated": "2026-05-13",
   "validation_sites": [
@@ -111,12 +111,42 @@
   "key_observations": {
     "winter_barley_harvest": "Bobby Miller confirmed mid-July 2026 harvest due to hot weather",
     "nutrient_stress": "Dry May 2026 causing Mg/Mn/P deficiency in east Ireland",
-    "booting_stage": "Winter Wheat at booting (L1 100%) by May 12 — peak SAR signal expected"
+    "booting_stage": "Winter Wheat at booting (L1 100%) by May 12 \u2014 peak SAR signal expected"
   },
   "bbch_to_date_mapping": {
     "GS29-30": "2026-03-26",
     "GS31-37": "2026-04-14",
     "Booting": "2026-05-12",
     "Harvest": "2026-07-10 to 2026-07-20"
+  },
+  "sowing_progress_april_20": {
+    "spring_barley": {
+      "most_delayed_60_70pct": [
+        "Offaly",
+        "Louth",
+        "Dublin",
+        "Meath"
+      ],
+      "delayed_50_60pct": [
+        "South Wexford",
+        "West Cork"
+      ],
+      "moderate_20_30pct": [
+        "Laois",
+        "Tipperary",
+        "Carlow",
+        "Kilkenny"
+      ],
+      "advanced_10_20pct": [
+        "North Wexford",
+        "South Kildare",
+        "East Cork"
+      ]
+    },
+    "maize": "Not yet planted as of April 20",
+    "beet": "Not yet planted as of April 20",
+    "osr": "Already well into flowering",
+    "winter_barley": "Early varieties at flag leaf, late sown at GS31",
+    "source": "Teagasc Crop Report Update 4 2026"
   }
 }
