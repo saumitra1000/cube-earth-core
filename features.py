@@ -1,15 +1,14 @@
 """
-features.py — Parallel S1+S2 feature extraction
-4 years extracted simultaneously → ~11s per parcel vs 36s sequential
+features.py — Sequential S1+S2 feature extraction
+Sequential is safer for PU consumption — no parallel requests
 """
 import numpy as np
-from concurrent.futures import ThreadPoolExecutor
 from statistics import get_s2_statistics
 from sar import get_s1_statistics
 
-S2_METRICS     = ['NDVI', 'NDRE', 'EVI', 'NDWI', 'NDII']
-S1_METRICS     = ['VV', 'VH', 'RVI', 'VHVV']
-YEARS          = [2022, 2023, 2024, 2025]
+S2_METRICS      = ['NDVI', 'NDRE', 'EVI', 'NDWI', 'NDII']
+S1_METRICS      = ['VV', 'VH', 'RVI', 'VHVV']
+YEARS           = [2022, 2023, 2024, 2025]
 DEKADS_PER_YEAR = 32
 
 def get_bbox(lat, lng, buffer=0.003):
@@ -38,13 +37,6 @@ def interpolate(values, target_n=32):
                        valid_val)
     return [round(float(v), 4) for v in interp]
 
-def _extract_year(args):
-    bbox, year = args
-    start, end = year_dates(year)
-    s2 = get_s2_statistics(bbox, start, end)
-    s1 = get_s1_statistics(bbox, start, end)
-    return year, s2, s1
-
 def extract_features(lat=None, lng=None, polygon=None,
                      years=None, feat_cols=None):
     if years is None:
@@ -53,15 +45,22 @@ def extract_features(lat=None, lng=None, polygon=None,
     bbox = get_polygon_bbox(polygon) if polygon else get_bbox(lat, lng)
     features = {}
 
-    with ThreadPoolExecutor(max_workers=4) as executor:
-        results = list(executor.map(_extract_year, [(bbox, y) for y in years]))
+    for year in years:
+        start, end = year_dates(year)
 
-    for year, s2_data, s1_data in results:
-        s2_by_metric = {m: [obs.get(m) for obs in s2_data] for m in S2_METRICS}
-        s1_by_metric = {m: [obs.get(m) for obs in s1_data] for m in S1_METRICS}
+        # Sequential — one request at a time
+        s2_data = get_s2_statistics(bbox, start, end)
+        s1_data = get_s1_statistics(bbox, start, end)
 
-        s2_interp = {m: interpolate(s2_by_metric[m], DEKADS_PER_YEAR) for m in S2_METRICS}
-        s1_interp = {m: interpolate(s1_by_metric[m], DEKADS_PER_YEAR) for m in S1_METRICS}
+        s2_by_metric = {m: [obs.get(m) for obs in s2_data]
+                        for m in S2_METRICS}
+        s1_by_metric = {m: [obs.get(m) for obs in s1_data]
+                        for m in S1_METRICS}
+
+        s2_interp = {m: interpolate(s2_by_metric[m], DEKADS_PER_YEAR)
+                     for m in S2_METRICS}
+        s1_interp = {m: interpolate(s1_by_metric[m], DEKADS_PER_YEAR)
+                     for m in S1_METRICS}
 
         for d in range(DEKADS_PER_YEAR):
             for m in S1_METRICS:
@@ -72,14 +71,3 @@ def extract_features(lat=None, lng=None, polygon=None,
     if feat_cols:
         return {col: features.get(col, 0.0) for col in feat_cols}
     return features
-
-if __name__ == '__main__':
-    import json, time
-    with open('lpis_2024_unique.json') as f:
-        parcels = json.load(f)
-    p = parcels[0]
-    print(f"Testing: {p['crop']}")
-    start = time.time()
-    feats = extract_features(polygon=p['geometry']['coordinates'][0])
-    elapsed = time.time() - start
-    print(f"Features: {len(feats)} in {elapsed:.1f}s")

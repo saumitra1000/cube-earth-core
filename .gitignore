@@ -220,3 +220,7 @@ __marimo__/
 *.cbm
 *.pkl
 models/
+hls_data/
+features_cdse.csv
+stac_item.json
+hls_task_id.txt
