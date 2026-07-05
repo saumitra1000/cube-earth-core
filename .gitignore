@@ -219,7 +219,6 @@ __marimo__/
 .env
 *.cbm
 *.pkl
-models/
 hls_data/
 features_cdse.csv
 stac_item.json
