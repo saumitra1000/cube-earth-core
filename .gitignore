@@ -226,3 +226,4 @@ hls_task_id.txt
 hls_all_parcels.csv
 hls_features.csv
 catboost_info/
+hls_features_enriched.csv
