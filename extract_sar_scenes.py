@@ -5,16 +5,26 @@ import planetary_computer
 import pystac_client
 import rasterio
 from rasterio.warp import transform as warp_transform
+from shapely.geometry import shape, box as shapely_box
 from collections import defaultdict
-from datetime import datetime, date
-import pickle
+from datetime import datetime
 
-OUTPUT_FILE  = 'sar_scene_features.csv'
-PROGRESS_FILE = 'sar_progress.pkl'
-YEARS        = [2022, 2023, 2024, 2025]
-DEKADS       = 32
-SAR_METRICS  = ['VV', 'VH', 'RVI', 'VHVV', 'DpRVIc']
-IRELAND_BBOX = [-10.5, 51.0, -5.0, 55.5]
+OUTPUT_FILE   = 'sar_scene_features.csv'
+PROGRESS_DIR  = 'sar_progress'
+YEARS         = [2025]
+DEKADS        = 32
+SAR_METRICS   = ['VV', 'VH', 'RVI', 'VHVV', 'DpRVIc']
+PARCEL_BBOX   = [-7.3, 52.2, -6.1, 53.1]
+PARCEL_EXTENT = shapely_box(*PARCEL_BBOX)
+
+MONTHS = [
+    ('01-01','01-31'), ('02-01','02-28'), ('03-01','03-31'),
+    ('04-01','04-30'), ('05-01','05-31'), ('06-01','06-30'),
+    ('07-01','07-31'), ('08-01','08-31'), ('09-01','09-30'),
+    ('10-01','10-31'), ('11-01','11-21'),
+]
+
+os.makedirs(PROGRESS_DIR, exist_ok=True)
 
 def compute_metrics(vv_lin, vh_lin):
     eps    = 1e-10
@@ -45,121 +55,131 @@ def interpolate(vals_by_dekad, n=32):
             np.interp(np.arange(n, dtype=float),
                       np.array(valid_idx, dtype=float), valid_val)]
 
-def get_fresh_catalog():
+def get_catalog():
     return pystac_client.Client.open(
         'https://planetarycomputer.microsoft.com/api/stac/v1',
         modifier=planetary_computer.sign_inplace)
 
-def extract_all(parcels):
-    ids   = [str(p.get('sp_id', i)) for i, p in enumerate(parcels)]
-    lats  = [p['lat'] for p in parcels]
-    lngs  = [p['lng'] for p in parcels]
-    crops = [p['crop'] for p in parcels]
+def month_done(year, month):
+    return os.path.exists(
+        os.path.join(PROGRESS_DIR, str(year) + '_' + month + '_done.txt'))
 
-    # Load existing progress
-    if os.path.exists(PROGRESS_FILE):
-        print('Resuming from saved progress...')
-        with open(PROGRESS_FILE, 'rb') as f:
-            data = pickle.load(f)
-        completed_years = data.get('completed_years', [])
-        scene_data = data.get('scene_data', {})
-    else:
-        completed_years = []
-        scene_data = {pid: {yr: {d: {m: [] for m in SAR_METRICS}
-                            for d in range(DEKADS)}
-                          for yr in YEARS}
-                    for pid in ids}
+def process_month(year, m_start, m_end, ids, lats, lngs, out_csv):
+    month_key = str(year) + '-' + m_start[:2]
+    done_file = os.path.join(PROGRESS_DIR,
+                             str(year) + '_' + m_start[:2] + '_done.txt')
 
-    print('Already completed years: ' + str(completed_years))
+    if os.path.exists(done_file):
+        print('  Skipping ' + month_key + ' (done)', flush=True)
+        return
 
-    for year in YEARS:
-        if year in completed_years:
-            print('Skipping ' + str(year) + ' (already done)')
+    catalog  = get_catalog()
+    start    = str(year) + '-' + m_start
+    end      = str(year) + '-' + m_end
+    search   = catalog.search(
+        collections=['sentinel-1-rtc'],
+        bbox=PARCEL_BBOX,
+        datetime=start + '/' + end
+    )
+    items = [i for i in search.items()
+             if shape(i.geometry).intersects(PARCEL_EXTENT)]
+    print('  ' + month_key + ': ' + str(len(items)) + ' scenes', flush=True)
+
+    if not items:
+        open(done_file, 'w').close()
+        return
+
+    write_hdr  = not os.path.exists(out_csv)
+    fieldnames = ['scene_id', 'date', 'dekad', 'pid'] + SAR_METRICS
+    count      = 0
+
+    for i, item in enumerate(items):
+        if i > 0 and i % 20 == 0:
+            catalog = get_catalog()
+
+        try:
+            signed = planetary_computer.sign(item)
+            date_s = item.datetime.strftime('%Y-%m-%d')
+            dekad  = get_dekad(date_s)
+            scene_id = item.id
+
+            with rasterio.open(signed.assets['vv'].href) as src:
+                xs, ys = warp_transform('EPSG:4326', src.crs, lngs, lats)
+                vv_vals = []
+                for x, y in zip(xs, ys):
+                    try:
+                        r, c  = src.index(x, y)
+                        win   = rasterio.windows.Window(c-1, r-1, 3, 3)
+                        d2    = src.read(1, window=win).astype(float)
+                        valid = d2[d2 > 0]
+                        vv_vals.append(float(np.nanmean(valid)) if len(valid) > 0 else None)
+                    except:
+                        vv_vals.append(None)
+
+            with rasterio.open(signed.assets['vh'].href) as src:
+                vh_vals = []
+                for x, y in zip(xs, ys):
+                    try:
+                        r, c  = src.index(x, y)
+                        win   = rasterio.windows.Window(c-1, r-1, 3, 3)
+                        d2    = src.read(1, window=win).astype(float)
+                        valid = d2[d2 > 0]
+                        vh_vals.append(float(np.nanmean(valid)) if len(valid) > 0 else None)
+                    except:
+                        vh_vals.append(None)
+
+            rows_out = []
+            for pid, vv, vh in zip(ids, vv_vals, vh_vals):
+                if vv and vh and not np.isnan(vv) and not np.isnan(vh):
+                    m = compute_metrics(vv, vh)
+                    rows_out.append({'scene_id': scene_id, 'date': date_s,
+                                     'dekad': dekad, 'pid': pid, **m})
+
+            if rows_out:
+                with open(out_csv, 'a', newline='') as f:
+                    w = csv.DictWriter(f, fieldnames=fieldnames)
+                    if write_hdr:
+                        w.writeheader()
+                        write_hdr = False
+                    w.writerows(rows_out)
+                count += 1
+
+        except Exception as e:
+            if '403' not in str(e):
+                print('    Error: ' + str(e))
             continue
 
-        print('Processing ' + str(year) + '...')
-        catalog = get_fresh_catalog()
-        search  = catalog.search(
-            collections=['sentinel-1-rtc'],
-            bbox=IRELAND_BBOX,
-            datetime=str(year) + '-01-01/' + str(year) + '-11-21',
-            max_items=500
-        )
-        items = list(search.items())
-        print('  Found ' + str(len(items)) + ' scenes')
+    open(done_file, 'w').close()
+    print('  ' + month_key + ': ' + str(count) + ' scenes with valid data ✅', flush=True)
 
-        for i, item in enumerate(items):
-            # Refresh catalog every 50 scenes to avoid token expiry
-            if i > 0 and i % 50 == 0:
-                print('  Refreshing token at scene ' + str(i) + '...')
-                catalog = get_fresh_catalog()
-
-            try:
-                signed = planetary_computer.sign(item)
-                date_s = item.datetime.strftime('%Y-%m-%d')
-                dekad  = get_dekad(date_s)
-
-                with rasterio.open(signed.assets['vv'].href) as src:
-                    xs, ys = warp_transform('EPSG:4326', src.crs, lngs, lats)
-                    vv_vals = []
-                    for x, y in zip(xs, ys):
-                        try:
-                            r, c  = src.index(x, y)
-                            win   = rasterio.windows.Window(c-1, r-1, 3, 3)
-                            d2    = src.read(1, window=win).astype(float)
-                            valid = d2[d2 > 0]
-                            vv_vals.append(float(np.nanmean(valid)) if len(valid) > 0 else None)
-                        except:
-                            vv_vals.append(None)
-
-                with rasterio.open(signed.assets['vh'].href) as src:
-                    vh_vals = []
-                    for x, y in zip(xs, ys):
-                        try:
-                            r, c  = src.index(x, y)
-                            win   = rasterio.windows.Window(c-1, r-1, 3, 3)
-                            d2    = src.read(1, window=win).astype(float)
-                            valid = d2[d2 > 0]
-                            vh_vals.append(float(np.nanmean(valid)) if len(valid) > 0 else None)
-                        except:
-                            vh_vals.append(None)
-
-                for pid, vv, vh in zip(ids, vv_vals, vh_vals):
-                    if vv and vh and not np.isnan(vv) and not np.isnan(vh):
-                        metrics = compute_metrics(vv, vh)
-                        for m, v in metrics.items():
-                            scene_data[pid][year][dekad][m].append(v)
-
-                if (i+1) % 50 == 0:
-                    with open(PROGRESS_FILE, 'wb') as pf:
-                        import pickle
-                        pickle.dump({'completed_years': completed_years,
-                                    'scene_data': scene_data}, pf)
-                    print('  Progress saved at scene ' + str(i+1), flush=True)
-                if (i+1) % 20 == 0:
-                    print('  Scene ' + str(i+1) + '/' + str(len(items)) + ': ' + date_s, flush=True)
-
-            except Exception as e:
-                print('  Scene error: ' + str(e))
-                continue
-
-        # Save progress after each year
-        completed_years.append(year)
-        with open(PROGRESS_FILE, 'wb') as f:
-            pickle.dump({'completed_years': completed_years,
-                        'scene_data': scene_data}, f)
-        print('  Year ' + str(year) + ' complete and saved ✅')
-
+def build_features(ids, crops, lats, lngs):
     print('Building feature vectors...')
+    data = {pid: {yr: {d: {m: [] for m in SAR_METRICS}
+                        for d in range(DEKADS)}
+                  for yr in YEARS}
+            for pid in ids}
+
+    for year in YEARS:
+        csv_path = os.path.join(PROGRESS_DIR, str(year) + '_raw.csv')
+        if not os.path.exists(csv_path):
+            continue
+        with open(csv_path) as f:
+            for row in csv.DictReader(f):
+                pid   = row['pid']
+                dekad = int(row['dekad'])
+                if pid in data:
+                    for m in SAR_METRICS:
+                        if row.get(m):
+                            data[pid][year][dekad][m].append(float(row[m]))
+
     rows = []
     for i, pid in enumerate(ids):
-        row = {'sp_id': pid, 'crop': crops[i],
-               'lat': lats[i], 'lng': lngs[i]}
+        row = {'sp_id': pid, 'crop': crops[i], 'lat': lats[i], 'lng': lngs[i]}
         for year in YEARS:
             for metric in SAR_METRICS:
-                vals = {d: scene_data[pid][year][d][metric]
+                vals = {d: data[pid][year][d][metric]
                         for d in range(DEKADS)
-                        if scene_data[pid][year][d][metric]}
+                        if data[pid][year][d][metric]}
                 series = interpolate(vals, DEKADS)
                 for d, v in enumerate(series):
                     row['y' + str(year) + '_d' + str(d).zfill(2) + '_' + metric] = v
@@ -170,14 +190,22 @@ def extract_all(parcels):
         writer = csv.DictWriter(f, fieldnames=header)
         writer.writeheader()
         writer.writerows(rows)
-
     print('Saved ' + str(len(rows)) + ' parcels to ' + OUTPUT_FILE + ' ✅')
-    return rows
 
 if __name__ == '__main__':
     with open('lpis_2024_unique.json') as f:
         parcels = json.load(f)
+    ids   = [str(p.get('sp_id', i)) for i, p in enumerate(parcels)]
+    lats  = [p['lat'] for p in parcels]
+    lngs  = [p['lng'] for p in parcels]
+    crops = [p['crop'] for p in parcels]
     print('Parcels: ' + str(len(parcels)))
-    start = time.time()
-    extract_all(parcels)
-    print('Total time: ' + str(round((time.time()-start)/60, 1)) + ' minutes')
+
+    for year in YEARS:
+        out_csv = os.path.join(PROGRESS_DIR, str(year) + '_raw.csv')
+        print('Processing ' + str(year) + '...')
+        for m_start, m_end in MONTHS:
+            process_month(year, m_start, m_end, ids, lats, lngs, out_csv)
+
+    build_features(ids, crops, lats, lngs)
+    print('Done ✅')
