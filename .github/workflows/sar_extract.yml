@@ -10,6 +10,8 @@ jobs:
     timeout-minutes: 350
     steps:
     - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - uses: actions/setup-python@v4
       with:
@@ -21,13 +23,17 @@ jobs:
     - name: Clone extractor
       run: git clone https://github.com/saumitra1000/crop-trajectory.git /tmp/crop-trajectory
 
+    - name: Configure git
+      run: |
+        git config user.email "action@github.com"
+        git config user.name "GitHub Action"
+
     - name: Run SAR extraction
       run: python3 extract_sar_e84.py
 
     - name: Commit progress
+      if: always()
       run: |
-        git config user.email "action@github.com"
-        git config user.name "GitHub Action"
+        git pull --rebase
         git add -f sar_progress_e84/
-        git diff --staged --quiet || git commit -m "SAR progress $(date)"
-        git push
+        git diff --staged --quiet || (git commit -m "SAR progress $(date)" && git push)
