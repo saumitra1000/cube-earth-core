@@ -32,6 +32,9 @@ jobs:
     - name: Final commit
       if: always()
       run: |
+        git add -f sar_progress_e84/
+        git stash
         git pull --rebase
+        git stash pop
         git add -f sar_progress_e84/
         git diff --staged --quiet || (git commit -m "SAR final $(date)" && git push)
