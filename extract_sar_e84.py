@@ -112,6 +112,12 @@ def process_month(catalog, year, month, ids, lats, lngs, raw_csv):
             count += 1
     open(done_file, "w").close()
     print(f"  {year}-{month:02d}: {count} scenes with data ✅", flush=True)
+    # Commit progress after each month
+    import subprocess
+    subprocess.run(["git", "add", "-f", "sar_progress_e84/"], capture_output=True)
+    subprocess.run(["git", "commit", "-m", f"SAR {year}-{month:02d} complete"], capture_output=True)
+    subprocess.run(["git", "push"], capture_output=True)
+    print(f"  {year}-{month:02d}: committed to GitHub ✅", flush=True)
 
 def build_features(ids, crops, lats, lngs):
     print("Building features...")
