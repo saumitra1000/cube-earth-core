@@ -10,8 +10,6 @@ jobs:
     timeout-minutes: 350
     steps:
     - uses: actions/checkout@v4
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
 
     - uses: actions/setup-python@v4
       with:
@@ -31,9 +29,9 @@ jobs:
     - name: Run SAR extraction
       run: python3 extract_sar_e84.py
 
-    - name: Commit progress
+    - name: Final commit
       if: always()
       run: |
         git pull --rebase
         git add -f sar_progress_e84/
-        git diff --staged --quiet || (git commit -m "SAR progress $(date)" && git push)
+        git diff --staged --quiet || (git commit -m "SAR final $(date)" && git push)
