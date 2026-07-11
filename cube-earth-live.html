@@ -356,9 +356,37 @@ function renderPanel(p, pid) {
       <div class="ir"><span class="ii">☁️</span><span class="il">Cloud cover (7d)</span><span class="iv n">~45%</span></div>
     </div>
     <div class="cw"><div class="ct">NDVI History 2025</div><div class="cc"><canvas id="c1"></canvas></div></div>
-    <div class="cw"><div class="ct">7-Day Weather Forecast</div><div class="cc"><canvas id="c2"></canvas></div></div>
+    <div class="cw">
+      <div class="ct">7-Day Weather Forecast</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px">
+        <div style="background:#0A1A0E;border-radius:7px;padding:8px;text-align:center">
+          <div style="font-size:16px">🌧</div>
+          <div style="font-size:9px;color:#4A7A50;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Rain</div>
+          <div style="font-size:14px;font-weight:700;color:#7AB0D4">18 mm</div>
+        </div>
+        <div style="background:#0A1A0E;border-radius:7px;padding:8px;text-align:center">
+          <div style="font-size:16px">🌡</div>
+          <div style="font-size:9px;color:#4A7A50;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Temp</div>
+          <div style="font-size:14px;font-weight:700;color:#D4A843">15–22°C</div>
+        </div>
+        <div style="background:#0A1A0E;border-radius:7px;padding:8px;text-align:center">
+          <div style="font-size:16px">💨</div>
+          <div style="font-size:9px;color:#4A7A50;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Wind</div>
+          <div style="font-size:14px;font-weight:700;color:#8BAF8F">12 km/h</div>
+        </div>
+      </div>
+      <div class="cc"><canvas id="c2"></canvas></div>
+    </div>
     <div class="sth">AI Recommendations</div>
-    ${recs.map(r=>`<div class="rc ${r.t}"><div class="rtitle">${r.h}</div><div class="rbody">${r.b}</div></div>`).join("")}
+    ${recs.map(r=>{
+      const icon = r.t==="good"?"🟢":r.t==="warn"?"🟡":"🔴";
+      const border = r.t==="good"?"#52B788":r.t==="warn"?"#D4A843":"#E07070";
+      const bg = r.t==="good"?"#0A1A0E":r.t==="warn"?"#1A1208":"#1A0808";
+      return `<div style="background:${bg};border-left:3px solid ${border};border-radius:0 8px 8px 0;padding:9px 12px;margin-bottom:6px">
+        <div style="font-size:12px;font-weight:600;margin-bottom:2px">${icon} ${r.h}</div>
+        <div style="font-size:11px;color:#6A9F6E;line-height:1.5">${r.b}</div>
+      </div>`;
+    }).join("")}
     <div class="sth">Parcel Information</div>
     <div class="ig">
       <div class="ii2"><div class="ik">Area</div><div class="iv2">${p.area} ha</div></div>
