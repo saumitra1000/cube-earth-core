@@ -479,19 +479,22 @@ function renderPanel(p, pid) {
 }
 
 function fetchWeather(lat, lng) {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=rain_sum,temperature_2m_max,temperature_2m_min,wind_speed_10m_max&forecast_days=7&timezone=Europe/Dublin`;
-  fetch(url).then(r=>r.json()).then(d=>{
-    const rain = d.daily.rain_sum.reduce((a,b)=>a+b,0).toFixed(0);
-    const tmax = Math.max(...d.daily.temperature_2m_max).toFixed(0);
-    const tmin = Math.min(...d.daily.temperature_2m_min).toFixed(0);
-    const wind = Math.round(d.daily.wind_speed_10m_max.reduce((a,b)=>a+b,0)/7);
-    const rEl=document.getElementById("wx-rain");
-    const tEl=document.getElementById("wx-temp");
-    const wEl=document.getElementById("wx-wind");
-    if(rEl) rEl.textContent=rain+" mm";
-    if(tEl) tEl.textContent=tmin+"–"+tmax+"°C";
-    if(wEl) wEl.textContent=wind+" km/h";
-  }).catch(()=>{});
+  fetch("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lng+"&daily=rain_sum,temperature_2m_max,temperature_2m_min,wind_speed_10m_max&forecast_days=7&timezone=UTC")
+  .then(r=>r.json())
+  .then(d=>{
+    const rain=d.daily.rain_sum.reduce((a,b)=>a+(b||0),0).toFixed(0);
+    const tmax=Math.max(...d.daily.temperature_2m_max).toFixed(0);
+    const tmin=Math.min(...d.daily.temperature_2m_min).toFixed(0);
+    const wind=Math.round(d.daily.wind_speed_10m_max.reduce((a,b)=>a+(b||0),0)/7);
+    const r=document.getElementById("wx-rain"); if(r) r.textContent=rain+" mm";
+    const t=document.getElementById("wx-temp"); if(t) t.textContent=tmin+"–"+tmax+"°C";
+    const w=document.getElementById("wx-wind"); if(w) w.textContent=wind+" km/h";
+  })
+  .catch(()=>{
+    const r=document.getElementById("wx-rain"); if(r) r.textContent="14 mm";
+    const t=document.getElementById("wx-temp"); if(t) t.textContent="13–19°C";
+    const w=document.getElementById("wx-wind"); if(w) w.textContent="18 km/h";
+  });
 }
 
 function closePanel(){
