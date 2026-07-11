@@ -278,8 +278,8 @@ let activePid = null;
 let showFill = true;
 let chart1=null, chart2=null, chart3=null;
 
-const normalStyle  = pid => ({ color: CROP_COLORS[RAW[pid]?.crop]||"#D4A843", weight:1, fillOpacity: showFill?0.35:0, fillColor: CROP_COLORS[RAW[pid]?.crop]||"#4A7A50" });
-const selectedStyle= pid => ({ color:"#52B788", weight:2.5, fillOpacity:0.5, fillColor: CROP_COLORS[RAW[pid]?.crop]||"#52B788" });
+const normalStyle  = pid => ({ color: CROP_COLORS[RAW[pid]?.crop]||"#D4A843", weight:3, fillOpacity: showFill?0.1:0, fillColor: CROP_COLORS[RAW[pid]?.crop]||"#4A7A50" });
+const selectedStyle= pid => ({ color:"#52B788", weight:4, fillOpacity:0.2, fillColor: CROP_COLORS[RAW[pid]?.crop]||"#52B788" });
 
 // Load real LPIS boundaries from GeoJSON
 document.getElementById("total-count").textContent = Object.keys(RAW).length;
@@ -293,8 +293,8 @@ fetch("parcels.geojson")
         const p = RAW[f.properties.pid] || {};
         return {
           color: CROP_COLORS[p.crop] || "#D4A843",
-          weight: 1,
-          fillOpacity: showFill ? 0.4 : 0,
+          weight: 3,
+          fillOpacity: showFill ? 0.1 : 0,
           fillColor: CROP_COLORS[p.crop] || "#4A7A50"
         };
       },
@@ -322,7 +322,7 @@ fetch("parcels.geojson")
       });
       const poly = L.polygon(pts, {
         color: CROP_COLORS[p.crop]||"#D4A843",
-        weight:1, fillOpacity: showFill?0.35:0,
+        weight:3, fillOpacity: showFill?0.1:0,
         fillColor: CROP_COLORS[p.crop]||"#4A7A50"
       }).bindTooltip(`<b>${p.crop}</b><br>${p.area}ha`,{sticky:true})
         .on("click", ()=>selectParcel(pid));
