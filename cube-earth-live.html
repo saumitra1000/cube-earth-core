@@ -231,7 +231,48 @@ function getHarvest(crop) {
 
 // ── MAP ──
 const map = L.map("map",{center:[52.65,-6.9],zoom:11});
-const satLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{attribution:"© Esri",maxZoom:19}).addTo(map);
+// Multiple imagery sources
+const esriLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{attribution:"© Esri",maxZoom:19});
+const osmLayer  = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OSM",maxZoom:19});
+
+// Sentinel-2 cloudless via EOX — recent, free, no key needed
+const sentinelLayer = L.tileLayer(
+  "https://tiles.maps.eox.at/wmts/1.0.0/s2cloudless-2024_3857/default/GoogleMapsCompatible/{z}/{y}/{x}.jpg",
+  {attribution:"Sentinel-2 cloudless 2024 © EOX IT Services",maxZoom:18}
+);
+
+const satLayer = esriLayer;
+esriLayer.addTo(map);
+
+// Layer switcher
+const imgSources = {
+  "🛰️ Sentinel-2 2024": sentinelLayer,
+  "🗺️ Esri Satellite": esriLayer,
+  "🗺️ OpenStreetMap": osmLayer
+};
+let activeImg = esriLayer;
+
+// Add switcher control
+const imgCtrl = L.control({position:"topright"});
+imgCtrl.onAdd = function(){
+  const d = L.DomUtil.create("div","");
+  d.style.cssText="background:rgba(10,26,14,0.92);border:1px solid #1A3020;border-radius:8px;padding:8px 10px;font-size:11px;color:#E8F0E9;cursor:pointer";
+  d.innerHTML=`<div style="font-size:9px;color:#4A7A50;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px">Imagery</div>
+    ${Object.keys(imgSources).map(k=>`<div class="img-opt" data-key="${k}" style="padding:3px 0;cursor:pointer;color:#8BAF8F">${k}</div>`).join("")}`;
+  d.querySelectorAll(".img-opt").forEach(el=>{
+    L.DomEvent.on(el,"click",()=>{
+      map.removeLayer(activeImg);
+      activeImg=imgSources[el.dataset.key];
+      map.addLayer(activeImg);
+      activeImg.bringToBack();
+      d.querySelectorAll(".img-opt").forEach(e=>e.style.color="#8BAF8F");
+      el.style.color="#52B788";
+    });
+  });
+  L.DomEvent.disableClickPropagation(d);
+  return d;
+};
+imgCtrl.addTo(map);
 
 // ── PARCELS ──
 const parcelGroup = L.layerGroup().addTo(map);
