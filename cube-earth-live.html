@@ -386,7 +386,11 @@ function renderPanel(p, pid) {
   const stage = stages[si];
   const harvest = getHarvest(p.crop);
   const ndviNow = ndvi[month];
-  const cond = ndviNow>0.7?"Excellent":ndviNow>0.55?"Good":ndviNow>0.4?"Fair":"Poor";
+  const harvestCrops=["OSR","Winter Barley","Winter Wheat","Winter Oats"];
+  const atHarvest=si>=5;
+  const cond=(harvestCrops.includes(p.crop)&&atHarvest)
+    ?(ndviNow<.35?"Ready to Harvest":"Ripening")
+    :(ndviNow>0.7?"Excellent":ndviNow>0.55?"Good":ndviNow>0.4?"Fair":"Poor");
   const moisture = [5,4,6,7,6,5,4,4,5,6,7,6][month]>5?"High":ndviNow>0.5?"Adequate":"Low";
   const traffic = moisture==="High"?"Fair":"Good";
   const today = new Date().toLocaleDateString("en-IE",{day:"numeric",month:"short",year:"numeric"});
