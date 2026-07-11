@@ -1,0 +1,7 @@
+nohup: ignoring input
+/workspaces/cube-earth-core/extract_sar_planetary.py:89: DeprecationWarning: Setting the shape on a NumPy array has been deprecated in NumPy 2.5.
+As an alternative, you can create a new view using np.reshape (with copy=False if needed).
+  data = src.read(1, window=win).astype(float)
+/workspaces/cube-earth-core/extract_sar_planetary.py:95: DeprecationWarning: Setting the shape on a NumPy array has been deprecated in NumPy 2.5.
+As an alternative, you can create a new view using np.reshape (with copy=False if needed).
+  data = src.read(1, window=win).astype(float)

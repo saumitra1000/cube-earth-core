@@ -1,0 +1,42 @@
+name: SAR Extraction
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *'
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    permissions:
+      contents: write
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: pip install pystac-client rasterio shapely numpy requests
+
+    - name: Clone extractor
+      run: git clone https://github.com/saumitra1000/crop-trajectory.git /tmp/crop-trajectory
+
+    - name: Configure git
+      run: |
+        git config user.email "action@github.com"
+        git config user.name "GitHub Action"
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Shanker1000/cube-earth-core.git
+
+    - name: Run SAR extraction
+      run: python3 extract_sar_e84.py
+
+    - name: Final commit
+      if: always()
+      run: |
+        git add -f sar_progress_e84/
+        git diff --staged --quiet || (git commit -m "SAR final $(date)" && git push)

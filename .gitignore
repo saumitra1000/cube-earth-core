@@ -216,3 +216,16 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+.env
+*.cbm
+*.pkl
+hls_data/
+features_cdse.csv
+stac_item.json
+hls_task_id.txt
+hls_all_parcels.csv
+hls_features.csv
+catboost_info/
+hls_features_enriched.csv
+CropDataset-Enhanced.csv
+dataset_535.json
