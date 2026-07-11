@@ -373,6 +373,7 @@ function openPanel(p, pid) {
   document.getElementById("pload").style.display="flex";
   document.getElementById("pscroll").style.display="none";
   setTimeout(()=>renderPanel(p,pid), 1200);
+  fetchWeather(p.lat, p.lng);
 }
 
 function renderPanel(p, pid) {
@@ -432,17 +433,17 @@ function renderPanel(p, pid) {
         <div style="background:#0A1A0E;border-radius:7px;padding:8px;text-align:center">
           <div style="font-size:16px">🌧</div>
           <div style="font-size:9px;color:#4A7A50;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Rain</div>
-          <div style="font-size:14px;font-weight:700;color:#7AB0D4">18 mm</div>
+          <div style="font-size:14px;font-weight:700;color:#7AB0D4" id="wx-rain">—</div>
         </div>
         <div style="background:#0A1A0E;border-radius:7px;padding:8px;text-align:center">
           <div style="font-size:16px">🌡</div>
           <div style="font-size:9px;color:#4A7A50;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Temp</div>
-          <div style="font-size:14px;font-weight:700;color:#D4A843">15–22°C</div>
+          <div style="font-size:14px;font-weight:700;color:#D4A843" id="wx-temp">—</div>
         </div>
         <div style="background:#0A1A0E;border-radius:7px;padding:8px;text-align:center">
           <div style="font-size:16px">💨</div>
           <div style="font-size:9px;color:#4A7A50;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Wind</div>
-          <div style="font-size:14px;font-weight:700;color:#8BAF8F">12 km/h</div>
+          <div style="font-size:14px;font-weight:700;color:#8BAF8F" id="wx-wind">—</div>
         </div>
       </div>
       <div class="cc"><canvas id="c2"></canvas></div>
@@ -475,6 +476,22 @@ function renderPanel(p, pid) {
     chart1=new Chart(document.getElementById("c1"),{type:"line",data:{labels:months,datasets:[{data:ndvi,borderColor:"#52B788",backgroundColor:"#52B78822",borderWidth:2,pointRadius:3,pointBackgroundColor:months.map((_,i)=>i===month?"#52B788":"#2D6A4F"),tension:.4,fill:true}]},options:co});
     chart2=new Chart(document.getElementById("c2"),{type:"bar",data:{labels:wx.days,datasets:[{label:"Rain mm",data:wx.rain,backgroundColor:"#7AB0D430",borderColor:"#7AB0D4",borderWidth:1,yAxisID:"y"},{label:"Temp °C",data:wx.temp,type:"line",borderColor:"#D4A843",pointRadius:3,borderWidth:2,tension:.4,yAxisID:"y1"}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:"#1A3020"},ticks:{color:"#4A7A50",font:{size:8}}},y:{grid:{color:"#1A3020"},ticks:{color:"#4A7A50",font:{size:8}},position:"left"},y1:{grid:{display:false},ticks:{color:"#D4A843",font:{size:8}},position:"right"}}}});
   });
+}
+
+function fetchWeather(lat, lng) {
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&daily=rain_sum,temperature_2m_max,temperature_2m_min,wind_speed_10m_max&forecast_days=7&timezone=Europe/Dublin`;
+  fetch(url).then(r=>r.json()).then(d=>{
+    const rain = d.daily.rain_sum.reduce((a,b)=>a+b,0).toFixed(0);
+    const tmax = Math.max(...d.daily.temperature_2m_max).toFixed(0);
+    const tmin = Math.min(...d.daily.temperature_2m_min).toFixed(0);
+    const wind = Math.round(d.daily.wind_speed_10m_max.reduce((a,b)=>a+b,0)/7);
+    const rEl=document.getElementById("wx-rain");
+    const tEl=document.getElementById("wx-temp");
+    const wEl=document.getElementById("wx-wind");
+    if(rEl) rEl.textContent=rain+" mm";
+    if(tEl) tEl.textContent=tmin+"–"+tmax+"°C";
+    if(wEl) wEl.textContent=wind+" km/h";
+  }).catch(()=>{});
 }
 
 function closePanel(){
