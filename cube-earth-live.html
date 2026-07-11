@@ -402,6 +402,12 @@ function renderPanel(p, pid) {
   const recs = [];
   if(p.conf < 50) recs.push({t:"b",icon:"🔴",h:"Low confidence — "+p.conf+"%",b:"Model confidence is low. This parcel has an ambiguous spectral signature. Ground truth verification recommended."});
   else if(p.conf < 65) recs.push({t:"w",icon:"🟡",h:"Moderate confidence — "+p.conf+"%",b:"Prediction may be uncertain. Could be mixed cropping or atypical growth pattern."});
+  const wRisk=getWaterloggingRisk(p.lat,p.lng);
+  const dRisk=getDiseaseRisk(p.crop,month);
+  if(wRisk==="High") recs.push({t:"b",icon:"🔴",h:"High waterlogging risk",b:"Low-lying field with high seasonal rainfall. Avoid heavy machinery. Check drainage channels before any field operations."});
+  else if(wRisk==="Medium") recs.push({t:"w",icon:"🟡",h:"Monitor soil moisture",b:"Moderate waterlogging risk based on field elevation and rainfall. Check field trafficability before operations."});
+  if(dRisk==="High") recs.push({t:"b",icon:"🔴",h:"High disease pressure — "+p.crop,b:"Warm wet conditions favour fungal disease. Check for Septoria/Rhynchosporium. Consider fungicide application if not already applied."});
+  else if(dRisk==="Medium") recs.push({t:"w",icon:"🟡",h:"Monitor for disease",b:"Conditions are conducive to disease development. Scout fields regularly and monitor crop canopy."});
   if(cond==="Excellent"||cond==="Good") recs.push({t:"good",h:"✅ Healthy crop",b:"Vegetation indices indicate good canopy development. No signs of stress detected from satellite data."});
   if(moisture==="High") recs.push({t:"warn",h:"⚠️ High soil moisture",b:"SMAP data indicates elevated soil moisture. Monitor drainage and avoid heavy machinery to prevent compaction."});
   if(si>=4) recs.push({t:"warn",h:"🚜 Harvest approaching",b:`${p.crop} is entering the harvest window. Monitor grain moisture and plan logistics. Expected: ${harvest}.`});
@@ -436,6 +442,9 @@ function renderPanel(p, pid) {
       <div class="ir"><span class="ii">💧</span><span class="il">Soil Moisture</span><span class="iv ${moisture==="Adequate"?"g":moisture==="High"?"w":"b"}">${moisture}</span></div>
       <div class="ir"><span class="ii">🚜</span><span class="il">Trafficability</span><span class="iv ${traffic==="Good"?"g":"w"}">${traffic}</span></div>
       <div class="ir"><span class="ii">☁️</span><span class="il">Cloud cover (7d)</span><span class="iv n">~45%</span></div>
+      <div class="ir"><span class="ii">💧</span><span class="il">Waterlogging Risk</span><span class="iv ${getWaterloggingRisk(p.lat,p.lng)==='High'?'b':getWaterloggingRisk(p.lat,p.lng)==='Medium'?'w':'g'}">${getWaterloggingRisk(p.lat,p.lng)}</span></div>
+      <div class="ir"><span class="ii">🍄</span><span class="il">Disease Risk</span><span class="iv ${getDiseaseRisk(p.crop,month)==='High'?'b':getDiseaseRisk(p.crop,month)==='Medium'?'w':'g'}">${getDiseaseRisk(p.crop,month)}</span></div>
+      <div class="ir"><span class="ii">📊</span><span class="il">Yield Estimate</span><span class="iv n">${getYieldEstimate(p.crop,ndviNow)} t/ha</span></div>
     </div>
     <div class="cw"><div class="ct">NDVI History 2025</div><div class="cc"><canvas id="c1"></canvas></div></div>
     <div class="cw">
