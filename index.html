@@ -372,7 +372,16 @@ function openPanel(p, pid) {
   panel.classList.add("open");
   document.getElementById("pload").style.display="flex";
   document.getElementById("pscroll").style.display="none";
-  setTimeout(()=>{renderPanel(p,pid);setTimeout(()=>fetchWeather(p.lat,p.lng),300);},1200);
+  setTimeout(()=>{
+    renderPanel(p,pid);
+    // Retry weather update until elements exist
+    var wxTries=0;
+    var wxInterval=setInterval(()=>{
+      var r=document.getElementById("wx-rain");
+      if(r){clearInterval(wxInterval);fetchWeather(p.lat,p.lng);}
+      if(++wxTries>20)clearInterval(wxInterval);
+    },100);
+  },1200);
 }
 
 function renderPanel(p, pid) {
