@@ -372,8 +372,7 @@ function openPanel(p, pid) {
   panel.classList.add("open");
   document.getElementById("pload").style.display="flex";
   document.getElementById("pscroll").style.display="none";
-  setTimeout(()=>renderPanel(p,pid), 1200);
-  fetchWeather(p.lat, p.lng);
+  setTimeout(()=>{renderPanel(p,pid);setTimeout(()=>fetchWeather(p.lat,p.lng),300);},1200);
 }
 
 function renderPanel(p, pid) {
