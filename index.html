@@ -400,8 +400,8 @@ function renderPanel(p, pid) {
   const traffic = moisture==="High"?"Fair":"Good";
   const today = new Date().toLocaleDateString("en-IE",{day:"numeric",month:"short",year:"numeric"});
   const recs = [];
-  if(p.conf < 50) recs.push({t:"b",icon:"🔴",h:"Low confidence — "+p.conf+"%",b:"Model confidence is low. This parcel has an ambiguous spectral signature. Ground truth verification recommended."});
-  else if(p.conf < 65) recs.push({t:"w",icon:"🟡",h:"Moderate confidence — "+p.conf+"%",b:"Prediction may be uncertain. Could be mixed cropping or atypical growth pattern."});
+  if(p.conf < 45) recs.push({t:"b",icon:"🔴",h:"Low confidence — "+p.conf+"%",b:"Model confidence is low. This parcel has an ambiguous spectral signature. Ground truth verification recommended."});
+  else if(p.conf < 60) recs.push({t:"w",icon:"🟡",h:"Moderate confidence — "+p.conf+"%",b:"Prediction may be uncertain. Could be mixed cropping or atypical growth pattern."});
   const wRisk=getWaterloggingRisk(p.lat,p.lng);
   const dRisk=getDiseaseRisk(p.crop,month);
   if(wRisk==="High") recs.push({t:"b",icon:"🔴",h:"High waterlogging risk",b:"Low-lying field with high seasonal rainfall. Avoid heavy machinery. Check drainage channels before any field operations."});
@@ -442,6 +442,9 @@ function renderPanel(p, pid) {
       <div class="ir"><span class="ii">💧</span><span class="il">Soil Moisture</span><span class="iv ${moisture==="Adequate"?"g":moisture==="High"?"w":"b"}">${moisture}</span></div>
       <div class="ir"><span class="ii">🚜</span><span class="il">Trafficability</span><span class="iv ${traffic==="Good"?"g":"w"}">${traffic}</span></div>
       <div class="ir"><span class="ii">☁️</span><span class="il">Cloud cover (7d)</span><span class="iv n">~45%</span></div>
+      <div class="ir"><span class="ii">🌊</span><span class="il">Waterlogging Risk</span><span class="iv" id="w-risk">—</span></div>
+      <div class="ir"><span class="ii">🍄</span><span class="il">Disease Risk</span><span class="iv" id="d-risk">—</span></div>
+      <div class="ir"><span class="ii">📊</span><span class="il">Yield Estimate</span><span class="iv n" id="y-est">—</span></div>
       <div class="ir"><span class="ii">💧</span><span class="il">Waterlogging Risk</span><span class="iv ${getWaterloggingRisk(p.lat,p.lng)==='High'?'b':getWaterloggingRisk(p.lat,p.lng)==='Medium'?'w':'g'}">${getWaterloggingRisk(p.lat,p.lng)}</span></div>
       <div class="ir"><span class="ii">🍄</span><span class="il">Disease Risk</span><span class="iv ${getDiseaseRisk(p.crop,month)==='High'?'b':getDiseaseRisk(p.crop,month)==='Medium'?'w':'g'}">${getDiseaseRisk(p.crop,month)}</span></div>
       <div class="ir"><span class="ii">📊</span><span class="il">Yield Estimate</span><span class="iv n">${getYieldEstimate(p.crop,ndviNow)} t/ha</span></div>
