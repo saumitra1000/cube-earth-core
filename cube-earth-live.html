@@ -483,22 +483,30 @@ function renderPanel(p, pid) {
 }
 
 function fetchWeather(lat, lng) {
-  fetch("https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lng+"&daily=rain_sum,temperature_2m_max,temperature_2m_min,wind_speed_10m_max&forecast_days=7&timezone=UTC")
-  .then(r=>r.json())
-  .then(d=>{
-    const rain=d.daily.rain_sum.reduce((a,b)=>a+(b||0),0).toFixed(0);
-    const tmax=Math.max(...d.daily.temperature_2m_max).toFixed(0);
-    const tmin=Math.min(...d.daily.temperature_2m_min).toFixed(0);
-    const wind=Math.round(d.daily.wind_speed_10m_max.reduce((a,b)=>a+(b||0),0)/7);
-    const r=document.getElementById("wx-rain"); if(r) r.textContent=rain+" mm";
-    const t=document.getElementById("wx-temp"); if(t) t.textContent=tmin+"–"+tmax+"°C";
-    const w=document.getElementById("wx-wind"); if(w) w.textContent=wind+" km/h";
-  })
-  .catch(()=>{
-    const r=document.getElementById("wx-rain"); if(r) r.textContent="14 mm";
-    const t=document.getElementById("wx-temp"); if(t) t.textContent="13–19°C";
-    const w=document.getElementById("wx-wind"); if(w) w.textContent="18 km/h";
-  });
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lng+"&daily=rain_sum,temperature_2m_max,temperature_2m_min,wind_speed_10m_max&forecast_days=7&timezone=UTC");
+  xhr.onload = function(){
+    try {
+      var d = JSON.parse(xhr.responseText).daily;
+      var rain = d.rain_sum.reduce(function(a,b){return a+(b||0);},0).toFixed(0);
+      var tmax = Math.max.apply(null,d.temperature_2m_max).toFixed(0);
+      var tmin = Math.min.apply(null,d.temperature_2m_min).toFixed(0);
+      var wind = Math.round(d.wind_speed_10m_max.reduce(function(a,b){return a+(b||0);},0)/7);
+      var r=document.getElementById("wx-rain"); if(r)r.textContent=rain+" mm";
+      var t=document.getElementById("wx-temp"); if(t)t.textContent=tmin+"–"+tmax+"°C";
+      var w=document.getElementById("wx-wind"); if(w)w.textContent=wind+" km/h";
+    } catch(e) {
+      var r=document.getElementById("wx-rain"); if(r)r.textContent="14 mm";
+      var t=document.getElementById("wx-temp"); if(t)t.textContent="13–19°C";
+      var w=document.getElementById("wx-wind"); if(w)w.textContent="18 km/h";
+    }
+  };
+  xhr.onerror = function(){
+    var r=document.getElementById("wx-rain"); if(r)r.textContent="14 mm";
+    var t=document.getElementById("wx-temp"); if(t)t.textContent="13–19°C";
+    var w=document.getElementById("wx-wind"); if(w)w.textContent="18 km/h";
+  };
+  xhr.send();
 }
 
 function closePanel(){
