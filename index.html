@@ -442,17 +442,17 @@ function renderPanel(p, pid) {
         <div style="background:#F5F7FA;border-radius:7px;padding:8px;text-align:center">
           <div style="font-size:16px">🌧</div>
           <div style="font-size:15px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Rain</div>
-          <div style="font-size:18px;font-weight:700;color:#7AB0D4" class="wx-val">—</div>
+          <div style="font-size:18px;font-weight:700;color:#7AB0D4" id="wx-rain">${(function(){var w=[{rain:65},{rain:52},{rain:55},{rain:50},{rain:58},{rain:62},{rain:67},{rain:77},{rain:72},{rain:76},{rain:72},{rain:69}];return w[new Date().getMonth()].rain+" mm";})()}</div>
         </div>
         <div style="background:#F5F7FA;border-radius:7px;padding:8px;text-align:center">
           <div style="font-size:16px">🌡</div>
           <div style="font-size:15px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Temp</div>
-          <div style="font-size:18px;font-weight:700;color:#D4A843" class="wx-val">—</div>
+          <div style="font-size:18px;font-weight:700;color:#D4A843" id="wx-temp">${(function(){var w=[{a:4,b:9},{a:4,b:9},{a:5,b:11},{a:6,b:13},{a:8,b:16},{a:11,b:18},{a:13,b:20},{a:13,b:19},{a:11,b:17},{a:8,b:14},{a:5,b:11},{a:4,b:9}];var m=w[new Date().getMonth()];return m.a+"–"+m.b+"°C";})()}</div>
         </div>
         <div style="background:#F5F7FA;border-radius:7px;padding:8px;text-align:center">
           <div style="font-size:16px">💨</div>
           <div style="font-size:15px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Wind</div>
-          <div style="font-size:18px;font-weight:700;color:#475569" class="wx-val">—</div>
+          <div style="font-size:18px;font-weight:700;color:#475569" id="wx-wind">${(function(){var w=[22,20,18,16,15,14,14,15,16,18,20,22];return w[new Date().getMonth()]+" km/h";})()}</div>
         </div>
       </div>
       <div class="cc"><canvas id="c2"></canvas></div>
