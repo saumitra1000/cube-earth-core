@@ -15,98 +15,98 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 #topbar{position:fixed;top:0;left:0;right:0;height:52px;background:#fff;backdrop-filter:blur(8px);border-bottom:1px solid #E2E8F0;z-index:1000;display:flex;align-items:center;gap:10px;padding:0 14px}
 #logo{display:flex;align-items:center;gap:8px}
 #logo-icon{width:30px;height:30px;background:linear-gradient(135deg,#16a34a,#52B788);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px}
-#logo-text{font-size:14px;font-weight:700;white-space:nowrap}
+#logo-text{font-size:18px;font-weight:700;white-space:nowrap}
 #search-wrap{flex:1;max-width:360px;position:relative}
-#search{width:100%;padding:7px 12px 7px 30px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:8px;color:#1A2332;font-size:13px;outline:none}
+#search{width:100%;padding:7px 12px 7px 30px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:8px;color:#1A2332;font-size:15px;outline:none}
 #search:focus{border-color:#16a34a}
 #search::placeholder{color:#94A3B8}
-#search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:11px;color:#94A3B8}
-.tbtn{padding:6px 11px;border-radius:7px;font-size:12px;cursor:pointer;border:1.5px solid #E2E8F0;background:#F8FAFC;color:#475569;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all .15s}
+#search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:15px;color:#94A3B8}
+.tbtn{padding:6px 11px;border-radius:7px;font-size:16px;cursor:pointer;border:1.5px solid #E2E8F0;background:#F8FAFC;color:#475569;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all .15s}
 .tbtn:hover{border-color:#16a34a;color:#16a34a}
 .tbtn.on{background:#16a34a;border-color:#16a34a;color:#1A2332}
 #btn-mf{margin-left:auto;background:linear-gradient(135deg,#16a34a,#52B788);border:none;color:#0A1A0E;font-weight:600}
 #app{position:fixed;top:52px;left:0;right:0;bottom:0;display:flex}
-#sidebar{width:210px;background:#fff;border-right:1px solid #E2E8F0;overflow-y:auto;padding:12px;flex-shrink:0;box-shadow:1px 0 4px rgba(0,0,0,.04)}
-.st{font-size:10px;color:#94A3B8;letter-spacing:1.2px;text-transform:uppercase;margin:0 0 8px;padding-bottom:4px;border-bottom:1px solid #E2E8F0}
+#sidebar{width:230px;background:#fff;border-right:1px solid #E2E8F0;overflow-y:auto;padding:12px;flex-shrink:0;box-shadow:1px 0 4px rgba(0,0,0,.04)}
+.st{font-size:16px;color:#94A3B8;letter-spacing:1.2px;text-transform:uppercase;margin:0 0 8px;padding-bottom:4px;border-bottom:1px solid #E2E8F0}
 .ss{margin-bottom:16px}
-.li{display:flex;align-items:center;gap:8px;padding:4px 0;cursor:pointer;font-size:12px;color:#475569}
+.li{display:flex;align-items:center;gap:8px;padding:4px 0;cursor:pointer;font-size:16px;color:#475569}
 .li input{accent-color:#16a34a}
 .ld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 #map-wrap{flex:1;position:relative}
 #map{width:100%;height:100%;background:#F5F7FA}
 .leaflet-container{background:#F5F7FA!important}
-.leaflet-control-attribution{background:rgba(255,255,255,0.85)!important;color:#94A3B8!important;font-size:9px!important}
+.leaflet-control-attribution{background:rgba(255,255,255,0.85)!important;color:#94A3B8!important;font-size:15px!important}
 .leaflet-control-attribution a{color:#16a34a!important}
 .leaflet-bar a{background:#F8FAFC!important;color:#475569!important;border-color:#E2E8F0!important}
 .leaflet-bar a:hover{background:#E2E8F0!important;color:#16a34a!important}
-.leaflet-tooltip{background:#F8FAFC;border:1px solid #16a34a;color:#1A2332;font-size:11px;border-radius:6px;padding:4px 8px}
+.leaflet-tooltip{background:#F8FAFC;border:1px solid #16a34a;color:#1A2332;font-size:15px;border-radius:6px;padding:4px 8px}
 #panel{width:350px;background:#fff;border-left:1px solid #E2E8F0;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;transform:translateX(100%);transition:transform .25s}
 #panel.open{transform:translateX(0)}
 #pscroll{overflow-y:auto;flex:1;padding:14px}
 #pload{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:10px;padding:40px}
 .spin{width:26px;height:26px;border:2px solid #E2E8F0;border-top-color:#16a34a;border-radius:50%;animation:sp .8s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
-#pload p{font-size:12px;color:#16a34a}
+#pload p{font-size:16px;color:#16a34a}
 .ph{margin-bottom:14px}
-.pt{font-size:13px;font-weight:700}
-.ps{font-size:10px;color:#94A3B8;margin-top:2px}
+.pt{font-size:15px;font-weight:700}
+.ps{font-size:16px;color:#94A3B8;margin-top:2px}
 .cg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .sc{background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:11px}
 .sc.hl{border-color:#16a34a40;background:linear-gradient(135deg,#F0FDF4,#DCFCE7);grid-column:1/-1}
-.sl{font-size:9px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
-.sv{font-size:16px;font-weight:700}
-.ss2{font-size:10px;color:#16a34a;margin-top:2px}
-.cp{display:inline-flex;align-items:center;gap:4px;background:#E2E8F0;border-radius:4px;padding:2px 6px;font-size:10px;color:#16a34a;margin-top:4px}
-.sth{font-size:10px;color:#16a34a;text-transform:uppercase;letter-spacing:1px;margin:12px 0 7px;display:flex;align-items:center;gap:6px}
+.sl{font-size:15px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px}
+.sv{font-size:18px;font-weight:700}
+.ss2{font-size:16px;color:#16a34a;margin-top:2px}
+.cp{display:inline-flex;align-items:center;gap:4px;background:#E2E8F0;border-radius:4px;padding:2px 6px;font-size:16px;color:#16a34a;margin-top:4px}
+.sth{font-size:16px;color:#16a34a;text-transform:uppercase;letter-spacing:1px;margin:12px 0 7px;display:flex;align-items:center;gap:6px}
 .sth::after{content:"";flex:1;height:1px;background:#E2E8F0}
 .ir{display:flex;align-items:center;padding:8px 12px;gap:10px;border-bottom:1px solid #0A1A0E;background:#F8FAFC}
 .ir:first-child{border-radius:10px 10px 0 0}
 .ir:last-child{border-bottom:none;border-radius:0 0 10px 10px}
-.ii{font-size:14px;width:20px;text-align:center;flex-shrink:0}
-.il{font-size:12px;color:#64748B;flex:1}
-.iv{font-size:12px;font-weight:600}
+.ii{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.il{font-size:16px;color:#64748B;flex:1}
+.iv{font-size:16px;font-weight:600}
 .iv.g{color:#16a34a}.iv.w{color:#D4A843}.iv.b{color:#E07070}.iv.n{color:#475569}
 .tl{display:flex;align-items:center;margin-bottom:12px;overflow:hidden}
 .ti{display:flex;flex-direction:column;align-items:center;flex:1;position:relative}
 .ti::before{content:"";position:absolute;top:11px;right:-50%;width:100%;height:2px;background:#E2E8F0;z-index:0}
 .ti:last-child::before{display:none}
-.td{width:22px;height:22px;border-radius:50%;border:2px solid #E2E8F0;background:#F5F7FA;z-index:1;display:flex;align-items:center;justify-content:center;font-size:9px}
+.td{width:22px;height:22px;border-radius:50%;border:2px solid #E2E8F0;background:#F5F7FA;z-index:1;display:flex;align-items:center;justify-content:center;font-size:15px}
 .td.done{background:#16a34a;border-color:#16a34a;color:#1A2332}
 .td.cur{background:#52B788;border-color:#16a34a;color:#0A1A0E;font-weight:700;box-shadow:0 0 0 3px rgba(82,183,136,.2)}
-.tlab{font-size:7px;color:#94A3B8;margin-top:3px;text-align:center;max-width:38px;line-height:1.2}
+.tlab{font-size:10px;color:#94A3B8;margin-top:3px;text-align:center;max-width:44px;line-height:1.2}
 .tlab.cur{color:#16a34a;font-weight:600}
 .cw{background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:11px;margin-bottom:8px}
-.ct{font-size:9px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
+.ct{font-size:15px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin-bottom:7px}
 .cc{position:relative;height:80px}
 .rc{background:#F8FAFC;border-left:3px solid #16a34a;border-radius:0 8px 8px 0;padding:9px 12px;margin-bottom:6px}
 .rc.w{border-left-color:#D4A843}
-.rtitle{font-size:12px;font-weight:600;margin-bottom:2px}
-.rbody{font-size:11px;color:#64748B;line-height:1.5}
+.rtitle{font-size:16px;font-weight:600;margin-bottom:2px}
+.rbody{font-size:15px;color:#64748B;line-height:1.5}
 .ig{display:grid;grid-template-columns:1fr 1fr;gap:4px}
 .ii2{background:#F8FAFC;border-radius:6px;padding:7px 9px}
-.ik{font-size:9px;color:#94A3B8;text-transform:uppercase;letter-spacing:.8px}
-.iv2{font-size:12px;color:#475569;margin-top:2px}
+.ik{font-size:15px;color:#94A3B8;text-transform:uppercase;letter-spacing:.8px}
+.iv2{font-size:16px;color:#475569;margin-top:2px}
 .pcl{position:fixed;top:60px;left:220px;z-index:999;display:flex;flex-direction:column;gap:6px;pointer-events:none}
 .leg{background:rgba(13,28,16,0.92);border:1.5px solid #E2E8F0;border-radius:8px;padding:8px 10px;pointer-events:all}
-.leg-title{font-size:9px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
-.leg-item{display:flex;align-items:center;gap:6px;font-size:10px;color:#475569;margin-bottom:3px}
+.leg-title{font-size:15px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:16px;color:#475569;margin-bottom:3px}
 .leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
 #mf-modal{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:2000;display:none;align-items:center;justify-content:center}
 #mf-modal.open{display:flex}
 #mf-box{background:#fff;border:1.5px solid #E2E8F0;border-radius:14px;width:min(560px,95vw);max-height:80vh;overflow:hidden;display:flex;flex-direction:column}
 #mf-hdr{padding:14px 18px;border-bottom:1px solid #E2E8F0;display:flex;align-items:center;justify-content:space-between}
-#mf-hdr h2{font-size:14px;font-weight:700}
+#mf-hdr h2{font-size:18px;font-weight:700}
 #mf-close{background:none;border:none;color:#94A3B8;cursor:pointer;font-size:17px}
 #mf-grid{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;overflow-y:auto}
 .fc{background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:12px;cursor:pointer;transition:border-color .15s}
 .fc:hover{border-color:#16a34a}
-.fn{font-size:13px;font-weight:600;margin-bottom:5px}
-.fco{font-size:12px;color:#16a34a}
-.fm{font-size:10px;color:#94A3B8;margin-top:3px}
-.fst{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;margin-top:5px}
+.fn{font-size:15px;font-weight:600;margin-bottom:5px}
+.fco{font-size:16px;color:#16a34a}
+.fm{font-size:16px;color:#94A3B8;margin-top:3px}
+.fst{display:inline-block;padding:2px 6px;border-radius:4px;font-size:16px;margin-top:5px}
 .fst.g{background:#E2E8F0;color:#16a34a}
 .fst.w{background:#2A2010;color:#D4A843}
-#stats-bar{position:fixed;bottom:0;left:210px;right:0;height:28px;background:#fff;border-top:1px solid #E2E8F0;display:flex;align-items:center;gap:20px;padding:0 14px;font-size:10px;color:#94A3B8;z-index:500}
+#stats-bar{position:fixed;bottom:0;left:230px;right:0;height:28px;background:#fff;border-top:1px solid #E2E8F0;display:flex;align-items:center;gap:20px;padding:0 14px;font-size:16px;color:#94A3B8;z-index:500}
 #stats-bar span{color:#16a34a}
 </style>
 </head>
@@ -142,7 +142,7 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     </div>
     <div class="ss">
       <div class="st">Summary</div>
-      <div style="font-size:11px;color:#64748B;line-height:2">
+      <div style="font-size:15px;color:#64748B;line-height:2">
         <div>🌾 Parcels: <b style="color:#16a34a" id="total-count">0</b></div>
         <div>📡 Updated: <b style="color:#16a34a">Today</b></div>
         <div>🎯 Accuracy: <b style="color:#16a34a">76%</b></div>
@@ -256,8 +256,8 @@ let activeImg = esriLayer;
 const imgCtrl = L.control({position:"topright"});
 imgCtrl.onAdd = function(){
   const d = L.DomUtil.create("div","");
-  d.style.cssText="background:rgba(10,26,14,0.92);border:1.5px solid #E2E8F0;border-radius:8px;padding:8px 10px;font-size:11px;color:#1A2332;cursor:pointer";
-  d.innerHTML=`<div style="font-size:9px;color:#94A3B8;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px">Imagery</div>
+  d.style.cssText="background:rgba(10,26,14,0.92);border:1.5px solid #E2E8F0;border-radius:8px;padding:8px 10px;font-size:15px;color:#1A2332;cursor:pointer";
+  d.innerHTML=`<div style="font-size:15px;color:#94A3B8;margin-bottom:5px;text-transform:uppercase;letter-spacing:1px">Imagery</div>
     ${Object.keys(imgSources).map(k=>`<div class="img-opt" data-key="${k}" style="padding:3px 0;cursor:pointer;color:#475569">${k}</div>`).join("")}`;
   d.querySelectorAll(".img-opt").forEach(el=>{
     L.DomEvent.on(el,"click",()=>{
@@ -409,12 +409,12 @@ function renderPanel(p, pid) {
         <div class="sl">Detected Crop</div>
         <div style="display:flex;align-items:center;justify-content:space-between">
           <div><div class="sv">${CROP_ICONS[p.crop]||"🌾"} ${p.crop}</div><div class="cp">🎯 ${p.conf}% confidence</div></div>
-          <div style="font-size:38px">${CROP_ICONS[p.crop]||"🌾"}</div>
+          <div style="font-size:42px">${CROP_ICONS[p.crop]||"🌾"}</div>
         </div>
       </div>
-      <div class="sc"><div class="sl">Growth Stage</div><div class="sv" style="font-size:14px">${stage}</div><div class="ss2">Stage ${si+1}/${stages.length}</div></div>
-      <div class="sc"><div class="sl">Condition</div><div class="sv ${cond==="Excellent"||cond==="Good"?"g":cond==="Fair"?"w":"b"}" style="font-size:14px">${cond}</div><div class="ss2">Dense canopy · Active</div></div>
-      <div class="sc"><div class="sl">Harvest Window</div><div class="sv" style="font-size:13px">${harvest}</div><div class="ss2">±3 days</div></div>
+      <div class="sc"><div class="sl">Growth Stage</div><div class="sv" style="font-size:16px">${stage}</div><div class="ss2">Stage ${si+1}/${stages.length}</div></div>
+      <div class="sc"><div class="sl">Condition</div><div class="sv ${cond==="Excellent"||cond==="Good"?"g":cond==="Fair"?"w":"b"}" style="font-size:16px">${cond}</div><div class="ss2">Dense canopy · Active</div></div>
+      <div class="sc"><div class="sl">Harvest Window</div><div class="sv" style="font-size:15px">${harvest}</div><div class="ss2">±3 days</div></div>
       <div class="sc"><div class="sl">Field Area</div><div class="sv">${p.area} ha</div><div class="ss2">~${Math.round(p.area*2.47)} acres</div></div>
     </div>
     <div class="sth">Growth Timeline</div>
@@ -432,18 +432,18 @@ function renderPanel(p, pid) {
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px">
         <div style="background:#F5F7FA;border-radius:7px;padding:8px;text-align:center">
           <div style="font-size:16px">🌧</div>
-          <div style="font-size:9px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Rain</div>
-          <div style="font-size:14px;font-weight:700;color:#7AB0D4" id="wx-rain">—</div>
+          <div style="font-size:15px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Rain</div>
+          <div style="font-size:18px;font-weight:700;color:#7AB0D4" id="wx-rain">—</div>
         </div>
         <div style="background:#F5F7FA;border-radius:7px;padding:8px;text-align:center">
           <div style="font-size:16px">🌡</div>
-          <div style="font-size:9px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Temp</div>
-          <div style="font-size:14px;font-weight:700;color:#D4A843" id="wx-temp">—</div>
+          <div style="font-size:15px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Temp</div>
+          <div style="font-size:18px;font-weight:700;color:#D4A843" id="wx-temp">—</div>
         </div>
         <div style="background:#F5F7FA;border-radius:7px;padding:8px;text-align:center">
           <div style="font-size:16px">💨</div>
-          <div style="font-size:9px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Wind</div>
-          <div style="font-size:14px;font-weight:700;color:#475569" id="wx-wind">—</div>
+          <div style="font-size:15px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Wind</div>
+          <div style="font-size:18px;font-weight:700;color:#475569" id="wx-wind">—</div>
         </div>
       </div>
       <div class="cc"><canvas id="c2"></canvas></div>
@@ -454,8 +454,8 @@ function renderPanel(p, pid) {
       const border = r.t==="good"?"#52B788":r.t==="warn"?"#D4A843":"#E07070";
       const bg = r.t==="good"?"#0A1A0E":r.t==="warn"?"#1A1208":"#1A0808";
       return `<div style="background:${bg};border-left:3px solid ${border};border-radius:0 8px 8px 0;padding:9px 12px;margin-bottom:6px">
-        <div style="font-size:12px;font-weight:600;margin-bottom:2px">${icon} ${r.h}</div>
-        <div style="font-size:11px;color:#64748B;line-height:1.5">${r.b}</div>
+        <div style="font-size:16px;font-weight:600;margin-bottom:2px">${icon} ${r.h}</div>
+        <div style="font-size:15px;color:#64748B;line-height:1.5">${r.b}</div>
       </div>`;
     }).join("")}
     <div class="sth">Parcel Information</div>
