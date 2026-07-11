@@ -498,7 +498,7 @@ function fetchWeather(lat, lng) {
     {rain:50,tmin:6,tmax:13,wind:16},  // Apr
     {rain:58,tmin:8,tmax:16,wind:15},  // May
     {rain:62,tmin:11,tmax:18,wind:14}, // Jun
-    {rain:67,tmin:13,tmax:20,wind:14}, // Jul
+    {rain:67,tmin:12,tmax:19,wind:14}, // Jul
     {rain:77,tmin:13,tmax:19,wind:15}, // Aug
     {rain:72,tmin:11,tmax:17,wind:16}, // Sep
     {rain:76,tmin:8,tmax:14,wind:18},  // Oct
@@ -507,7 +507,7 @@ function fetchWeather(lat, lng) {
   ];
   const wx = monthlyWx[new Date().getMonth()];
   // Add small variation by location
-  const variation = Math.round((lat * 10 + lng * 5) % 8) - 4;
+  const variation = 0;
   const wxEls=document.querySelectorAll(".wx-rain-val,.wx-temp-val,.wx-wind-val");
   const r=document.getElementById("wx-rain"); 
   const t=document.getElementById("wx-temp"); 
