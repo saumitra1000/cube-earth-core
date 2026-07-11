@@ -284,26 +284,55 @@ let chart1=null, chart2=null, chart3=null;
 const normalStyle  = pid => ({ color: CROP_COLORS[RAW[pid]?.crop]||"#D4A843", weight:1, fillOpacity: showFill?0.35:0, fillColor: CROP_COLORS[RAW[pid]?.crop]||"#4A7A50" });
 const selectedStyle= pid => ({ color:"#52B788", weight:2.5, fillOpacity:0.5, fillColor: CROP_COLORS[RAW[pid]?.crop]||"#52B788" });
 
-// Build approximate polygon per parcel (circle approximation)
-Object.entries(RAW).forEach(([pid, p]) => {
-  const r = 0.002 + (p.area||2)/800;
-  const n = 7;
-  const pts = Array.from({length:n},(_,i)=>{
-    const a = (i/n)*2*Math.PI + parseInt(pid)*0.7;
-    return [p.lat + r*0.7*Math.sin(a), p.lng + r*Math.cos(a)];
-  });
-  const poly = L.polygon(pts, {
-    color: CROP_COLORS[p.crop]||"#D4A843",
-    weight:1, fillOpacity: showFill?0.35:0,
-    fillColor: CROP_COLORS[p.crop]||"#4A7A50"
-  }).bindTooltip(`<b>${p.crop}</b><br>${p.area}ha · ${p.conf}% confidence`,{sticky:true})
-    .on("click", ()=>selectParcel(pid));
-  parcelGroup.addLayer(poly);
-  layers[pid] = poly;
-});
-
+// Load real LPIS boundaries from GeoJSON
 document.getElementById("total-count").textContent = Object.keys(RAW).length;
 document.getElementById("sb-count").textContent = Object.keys(RAW).length;
+
+fetch("parcels.geojson")
+  .then(r=>r.json())
+  .then(gj=>{
+    L.geoJSON(gj, {
+      style: f => {
+        const p = RAW[f.properties.pid] || {};
+        return {
+          color: CROP_COLORS[p.crop] || "#D4A843",
+          weight: 1,
+          fillOpacity: showFill ? 0.4 : 0,
+          fillColor: CROP_COLORS[p.crop] || "#4A7A50"
+        };
+      },
+      onEachFeature: (f, layer) => {
+        const pid = f.properties.pid;
+        const p = RAW[pid] || {};
+        layer.bindTooltip(
+          `<b>${p.crop||f.properties.crop}</b><br>${p.area||f.properties.area}ha · ${p.conf||f.properties.conf}% confidence`,
+          {sticky:true}
+        );
+        layer.on("click", ()=>selectParcel(pid));
+        layers[pid] = layer;
+      }
+    }).addTo(parcelGroup);
+    console.log("Real LPIS boundaries loaded ✅");
+  })
+  .catch(e=>{
+    console.log("GeoJSON failed, using approximate polygons:", e);
+    // Fallback to approximate polygons
+    Object.entries(RAW).forEach(([pid, p]) => {
+      const r = 0.002 + (p.area||2)/800;
+      const pts = Array.from({length:7},(_,i)=>{
+        const a = (i/7)*2*Math.PI + parseInt(pid)*0.7;
+        return [p.lat + r*0.7*Math.sin(a), p.lng + r*Math.cos(a)];
+      });
+      const poly = L.polygon(pts, {
+        color: CROP_COLORS[p.crop]||"#D4A843",
+        weight:1, fillOpacity: showFill?0.35:0,
+        fillColor: CROP_COLORS[p.crop]||"#4A7A50"
+      }).bindTooltip(`<b>${p.crop}</b><br>${p.area}ha`,{sticky:true})
+        .on("click", ()=>selectParcel(pid));
+      parcelGroup.addLayer(poly);
+      layers[pid] = poly;
+    });
+  });
 
 // ── LEGEND ──
 const crops = [...new Set(Object.values(RAW).map(p=>p.crop))].sort();
