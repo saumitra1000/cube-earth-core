@@ -436,17 +436,17 @@ function renderPanel(p, pid) {
         <div style="background:#F5F7FA;border-radius:7px;padding:8px;text-align:center">
           <div style="font-size:16px">🌧</div>
           <div style="font-size:15px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Rain</div>
-          <div style="font-size:18px;font-weight:700;color:#7AB0D4" id="wx-rain">—</div>
+          <div style="font-size:18px;font-weight:700;color:#7AB0D4" class="wx-val">—</div>
         </div>
         <div style="background:#F5F7FA;border-radius:7px;padding:8px;text-align:center">
           <div style="font-size:16px">🌡</div>
           <div style="font-size:15px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Temp</div>
-          <div style="font-size:18px;font-weight:700;color:#D4A843" id="wx-temp">—</div>
+          <div style="font-size:18px;font-weight:700;color:#D4A843" class="wx-val">—</div>
         </div>
         <div style="background:#F5F7FA;border-radius:7px;padding:8px;text-align:center">
           <div style="font-size:16px">💨</div>
           <div style="font-size:15px;color:#94A3B8;text-transform:uppercase;letter-spacing:1px;margin:3px 0">Wind</div>
-          <div style="font-size:18px;font-weight:700;color:#475569" id="wx-wind">—</div>
+          <div style="font-size:18px;font-weight:700;color:#475569" class="wx-val">—</div>
         </div>
       </div>
       <div class="cc"><canvas id="c2"></canvas></div>
@@ -500,9 +500,17 @@ function fetchWeather(lat, lng) {
   const wx = monthlyWx[new Date().getMonth()];
   // Add small variation by location
   const variation = Math.round((lat * 10 + lng * 5) % 8) - 4;
-  const r=document.getElementById("wx-rain"); if(r) r.textContent=(wx.rain+variation)+" mm";
-  const t=document.getElementById("wx-temp"); if(t) t.textContent=wx.tmin+"–"+wx.tmax+"°C";
-  const w=document.getElementById("wx-wind"); if(w) w.textContent=(wx.wind+Math.abs(variation))+" km/h";
+  const wxEls=document.querySelectorAll(".wx-rain-val,.wx-temp-val,.wx-wind-val");
+  const r=document.getElementById("wx-rain"); 
+  const t=document.getElementById("wx-temp"); 
+  const w=document.getElementById("wx-wind");
+  if(r) r.textContent=(wx.rain+variation)+" mm";
+  if(t) t.textContent=wx.tmin+"–"+wx.tmax+"°C";
+  if(w) w.textContent=(wx.wind+Math.abs(variation))+" km/h";
+  // Also update by class in rendered panel
+  document.querySelectorAll("[data-wx='rain']").forEach(el=>el.textContent=(wx.rain+variation)+" mm");
+  document.querySelectorAll("[data-wx='temp']").forEach(el=>el.textContent=wx.tmin+"–"+wx.tmax+"°C");
+  document.querySelectorAll("[data-wx='wind']").forEach(el=>el.textContent=(wx.wind+Math.abs(variation))+" km/h");
   
   // Also try live API in background
   try {
