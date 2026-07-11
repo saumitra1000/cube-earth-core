@@ -24,12 +24,13 @@ def get_dekad(date_str):
     return min(int((d.timetuple().tm_yday - 1) / (365/32)), 31)
 
 def compute_metrics(vv_lin, vh_lin):
+    # vv_lin and vh_lin are LINEAR power values
     eps = 1e-10
     vv_db  = 10 * np.log10(vv_lin + eps)
     vh_db  = 10 * np.log10(vh_lin + eps)
-    rvi    = (4 * vh_lin) / (vv_lin + vh_lin + eps)
-    vhvv   = vh_db - vv_db
-    q      = vh_lin / (vv_lin + eps)
+    rvi    = (4 * vh_lin) / (vv_lin + vh_lin + eps)   # must use linear
+    vhvv   = vh_db - vv_db                             # difference in dB is fine
+    q      = vh_lin / (vv_lin + eps)                   # must use linear
     dprvic = 1 - ((1-q)/(1+q+eps)) * (1/(1+q+eps))
     return {"VV": round(float(vv_db),4), "VH": round(float(vh_db),4),
             "RVI": round(float(rvi),4), "VHVV": round(float(vhvv),4),
@@ -154,16 +155,33 @@ def build_features(ids, crops, lats, lngs):
                 vv_dns = data[pid][year][d]["VV"]
                 vh_dns = data[pid][year][d]["VH"]
                 if vv_dns and vh_dns:
-                    vv_lin = np.mean([(dn*dn)/(600*600) for dn in vv_dns])
-                    vh_lin = np.mean([(dn*dn)/(600*600) for dn in vh_dns])
-                    m = compute_metrics(vv_lin, vh_lin)
-                    row[f"y{year}_d{d:02d}_RVI"] = m["RVI"]
-                    row[f"y{year}_d{d:02d}_DpRVIc"] = m["DpRVIc"]
-                    row[f"y{year}_d{d:02d}_VHVV"] = m["VHVV"]
+                    # Compute RVI per paired observation then take median
+                    # This avoids Jensen inequality from averaging DN^2 first
+                    paired = list(zip(vv_dns, vh_dns))
+                    rvi_obs, dprvic_obs, vhvv_obs = [], [], []
+                    for vv_dn, vh_dn in paired:
+                        vv_lin = (vv_dn*vv_dn)/(600*600)
+                        vh_lin = (vh_dn*vh_dn)/(600*600)
+                        eps = 1e-10
+                        rvi = (4*vh_lin)/(vv_lin+vh_lin+eps)
+                        q   = vh_lin/(vv_lin+eps)
+                        dprvic = 1 - ((1-q)/(1+q+eps))*(1/(1+q+eps))
+                        vv_db = 10*np.log10(vv_lin+eps)
+                        vh_db = 10*np.log10(vh_lin+eps)
+                        vhvv  = vh_db - vv_db
+                        # Only keep physically valid observations
+                        if 0 <= rvi <= 1.0:
+                            rvi_obs.append(rvi)
+                        if 0 <= dprvic <= 1.0:
+                            dprvic_obs.append(dprvic)
+                        vhvv_obs.append(vhvv)
+                    row[f"y{year}_d{d:02d}_RVI"]    = round(float(np.median(rvi_obs)),4) if rvi_obs else 0.3
+                    row[f"y{year}_d{d:02d}_DpRVIc"] = round(float(np.median(dprvic_obs)),4) if dprvic_obs else 0.5
+                    row[f"y{year}_d{d:02d}_VHVV"]   = round(float(np.median(vhvv_obs)),4) if vhvv_obs else -6.0
                 else:
-                    row[f"y{year}_d{d:02d}_RVI"] = 0.5
+                    row[f"y{year}_d{d:02d}_RVI"]    = 0.3
                     row[f"y{year}_d{d:02d}_DpRVIc"] = 0.5
-                    row[f"y{year}_d{d:02d}_VHVV"] = -6.0
+                    row[f"y{year}_d{d:02d}_VHVV"]   = -6.0
         rows.append(row)
     header = list(rows[0].keys())
     with open(OUTPUT_FILE, "w", newline="") as f:
