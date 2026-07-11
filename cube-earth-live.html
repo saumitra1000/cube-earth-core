@@ -525,6 +525,7 @@ function fetchWeather(lat, lng) {
     var xhr=new XMLHttpRequest();
     xhr.open("GET","https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lng+"&daily=rain_sum,temperature_2m_max,temperature_2m_min,wind_speed_10m_max&forecast_days=7&timezone=UTC",true);
     xhr.onload=function(){
+      console.log("Weather API status:",xhr.status,"url:",xhr.responseURL);
       if(xhr.status===200){
         var d=JSON.parse(xhr.responseText).daily;
         var rain=d.rain_sum.reduce(function(a,b){return a+(b||0);},0).toFixed(0);
