@@ -326,7 +326,7 @@ const crops=[...new Set(Object.values(RAW).map(p=>p.crop))].sort();
 document.getElementById("legend").innerHTML='<div class="leg-title">Crop Types</div>'+crops.map(c=>'<div class="leg-item"><div class="leg-dot" style="background:'+(CROP_COLORS[c]||"#64748B")+'"></div>'+c+'</div>').join("");
 
 // Crop filter
-document.getElementById("crop-filter").innerHTML=crops.map(c=>'<label class="li" onclick="filterCrop(\''+c+'\',this)"><input type="checkbox" checked><div class="ld" style="background:'+(CROP_COLORS[c]||"#64748B")+'"></div>'+c+'</label>').join("");
+document.getElementById("crop-filter").innerHTML=crops.map(c=>'<label class="li"><input type="checkbox" checked onchange="filterCrop(\''+c+'\',this.parentElement)"><div class="ld" style="background:'+(CROP_COLORS[c]||"#64748B")+'"></div>'+c+'</label>').join("");
 
 function filterCrop(crop,el){
   const on=el.querySelector("input").checked;
