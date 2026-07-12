@@ -401,7 +401,7 @@ function renderPanel(p,pid){
   if(si>=6)recs.push({t:"w",icon:"🟡",h:"Ready to harvest",b:"Crop is at or near harvest stage. Plan logistics and check weather window."});
   recs.push({t:"g",icon:"🟢",h:"Next satellite pass",b:"Sentinel-2 revisit in ~4 days. Updated NDVI and vegetation maps will be available."});
 
-  const stHTML=stages.map((s,i)=>'<div class="ti"><div class="td '+(i<si?"done":i===si?"cur":"")+('" id="td'+i+'">")+(i<si?"✓":i===si?"▶":"")+'</div><div class="tlab '+(i===si?"cur":"")+'">'+(s)+'</div></div>').join("");
+  const stHTML=stages.map((s,i)=>'<div class="ti"><div class="td '+(i<si?"done":i===si?"cur":"")+(i===si?" cur":"")+'">'+(i<si?"✓":i===si?"▶":"")+'</div><div class="tlab '+(i===si?"cur":"")+'">'+(s)+'</div></div>').join("");
 
   const matchCard=p.lpis?'<div class="sc mm" style="background:'+(p.match===false?"#FEF2F2":"#F0FDF4")+';border-color:'+(p.match===false?"#FECACA":"#BBF7D0")+'">'+'<div class="sl">LPIS Declaration (Farmer)</div>'+'<div style="display:flex;align-items:center;justify-content:space-between">'+'<div><div class="sv" style="font-size:14px">'+(CROP_ICONS[p.lpis]||"🌾")+" "+p.lpis+'</div>'+'<div style="font-size:12px;margin-top:4px;font-weight:600;color:'+(p.match===false?"#DC2626":"#16a34a")+'">'+(p.match===false?"⚠️ Mismatch with satellite data":"✅ Matches satellite detection")+'</div></div>'+'<div style="font-size:26px">'+(p.match===false?"⚠️":"✅")+'</div></div></div>':'';
 
