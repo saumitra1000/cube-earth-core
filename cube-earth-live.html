@@ -361,7 +361,12 @@ function toggleIreland(on){
     const IC={"Barley - Spring":"#D97706","Barley - Winter":"#92400E","Wheat - Winter":"#78350F","Wheat - Spring":"#CA8A04","Oats - Spring":"#65A30D","Oats - Winter":"#3F6212","Maize":"#16A34A","Oilseed Rape":"#EAB308","Rye":"#B45309"};
     fetch("ireland_tillage.geojson").then(r=>r.json()).then(gj=>{
       var el=document.getElementById("irl-load");if(el)el.remove();
-      irelandLayer=L.geoJSON(gj,{style:f=>({color:IC[f.properties.crop]||"#64748B",weight:1.5,fillOpacity:0.35,fillColor:IC[f.properties.crop]||"#64748B"}),onEachFeature:(f,layer)=>{layer.bindTooltip("<b>"+f.properties.crop+"</b><br>"+f.properties.area+" ha",{sticky:true});}}).addTo(map);var cb=document.getElementById("l-ireland");if(cb)cb.checked=true;
+      irelandLayer=L.geoJSON(gj,{
+  style:f=>({color:IC[f.properties.crop]||"#64748B",weight:1.5,fillOpacity:0.25,fillColor:IC[f.properties.crop]||"#64748B",interactive:false}),
+  onEachFeature:(f,layer)=>{layer.bindTooltip("<b>"+f.properties.crop+"</b><br>"+f.properties.area+" ha",{sticky:true});}
+}).addTo(map);
+irelandLayer.setZIndex(1);
+parcelGroup.setZIndex(2);var cb=document.getElementById("l-ireland");if(cb)cb.checked=true;
       document.getElementById("total-count").textContent="61,866";document.getElementById("sb-count").textContent="61,866 (All Ireland)";
       document.getElementById("sb-count").textContent="61,866";
     }).catch(()=>{var el=document.getElementById("irl-load");if(el)el.remove();});
