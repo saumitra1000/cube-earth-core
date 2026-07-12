@@ -108,6 +108,29 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .fst.w{background:#2A2010;color:#D4A843}
 #stats-bar{position:fixed;bottom:0;left:230px;right:0;height:28px;background:#fff;border-top:1px solid #E2E8F0;display:flex;align-items:center;gap:20px;padding:0 14px;font-size:16px;color:#94A3B8;z-index:500}
 #stats-bar span{color:#16a34a}
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  #topbar{padding:0 8px;gap:6px;height:50px}
+  #logo-text{font-size:14px}
+  #logo-sub{display:none}
+  #search-wrap{max-width:160px}
+  #search{font-size:12px;padding:6px 8px 6px 26px}
+  .tbtn{padding:5px 8px;font-size:11px}
+  #btn-draw span, #btn-draw{font-size:11px}
+  #app{flex-direction:column;top:50px}
+  #sidebar{width:100%;height:auto;max-height:0;overflow:hidden;border-right:none;border-bottom:1px solid #E2E8F0;transition:max-height 0.3s;padding:0}
+  #sidebar.mobile-open{max-height:300px;padding:10px;overflow-y:auto}
+  #map-wrap{flex:1;min-height:0}
+  #panel{width:100%;height:60vh;transform:translateY(100%);border-left:none;border-top:1.5px solid #E2E8F0;position:fixed;bottom:0;left:0;right:0;z-index:500}
+  #panel.open{transform:translateY(0)}
+  #pscroll{padding:12px}
+  .cg{grid-template-columns:1fr 1fr}
+  .sv{font-size:15px}
+  #stats-bar{left:0;font-size:9px;gap:8px;padding:0 8px}
+  #legend{display:none}
+  #img-switcher{display:none}
+}
 </style>
 </head>
 <body>
@@ -227,6 +250,11 @@ function getHarvest(crop) {
 }
 
 // ── MAP ──
+// Show mobile menu button
+if(window.innerWidth <= 768){
+  document.getElementById("btn-menu").style.display="flex";
+  document.getElementById("btn-draw").style.display="none";
+}
 const map = L.map("map",{center:[52.65,-6.9],zoom:11});
 // Multiple imagery sources
 const esriLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{attribution:"© Esri",maxZoom:19});
@@ -572,6 +600,9 @@ function toggleCropFill(on){showFill=on;Object.entries(layers).forEach(([pid,l])
 // ── DRAW ──
 const drawn=L.featureGroup().addTo(map);
 let drawMode=false;
+function toggleSidebar(){
+  document.getElementById("sidebar").classList.toggle("mobile-open");
+}
 function toggleDraw(){
   drawMode=!drawMode;
   document.getElementById("btn-draw").classList.toggle("on",drawMode);
