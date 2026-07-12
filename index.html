@@ -108,50 +108,6 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 .fst.w{background:#2A2010;color:#D4A843}
 #stats-bar{position:fixed;bottom:0;left:230px;right:0;height:28px;background:#fff;border-top:1px solid #E2E8F0;display:flex;align-items:center;gap:20px;padding:0 14px;font-size:16px;color:#94A3B8;z-index:500}
 #stats-bar span{color:#16a34a}
-
-/* ── MOBILE ── */
-@media (max-width: 768px) {
-  #topbar{padding:0 8px;gap:5px;height:50px;flex-wrap:nowrap}
-  #logo-sub{display:none}
-  #search-wrap{flex:1;max-width:140px}
-  #search{font-size:12px;padding:6px 8px 6px 24px}
-  .tbtn{padding:5px 7px;font-size:11px;gap:3px}
-  #btn-draw{display:none}
-  #btn-menu{display:flex!important}
-  #app{flex-direction:column;top:50px;bottom:28px}
-  #sidebar{
-    width:100%;height:auto;max-height:0;
-    overflow:hidden;border-right:none;
-    border-bottom:1px solid #E2E8F0;
-    transition:max-height 0.3s ease;
-    padding:0;position:relative;z-index:100;
-    background:#fff;flex-shrink:0
-  }
-  #sidebar.mobile-open{max-height:50vh;padding:10px;overflow-y:auto}
-  #map-wrap{flex:1;min-height:200px}
-  #panel{
-    width:100%!important;
-    height:65vh!important;
-    transform:translateY(100%)!important;
-    border-left:none!important;
-    border-top:2px solid #16a34a!important;
-    border-radius:16px 16px 0 0!important;
-    position:fixed!important;
-    bottom:28px!important;left:0!important;right:0!important;
-    z-index:500!important;
-    box-shadow:0 -4px 20px rgba(0,0,0,.15)!important
-  }
-  #panel.open{transform:translateY(0)!important}
-  #pscroll{padding:12px!important}
-  #pclosebtn{top:12px!important;right:12px!important;font-size:20px!important}
-  .cg{grid-template-columns:1fr 1fr!important}
-  .sv{font-size:14px!important}
-  #stats-bar{left:0!important;font-size:9px!important;gap:6px!important;padding:0 8px!important}
-  #legend{display:none!important}
-  #img-switcher{display:none!important}
-  .tl{overflow-x:auto}
-  .sth{margin:10px 0 6px!important}
-}
 </style>
 </head>
 <body>
@@ -271,11 +227,6 @@ function getHarvest(crop) {
 }
 
 // ── MAP ──
-// Show mobile menu button
-if(window.innerWidth <= 768){
-  document.getElementById("btn-menu").style.display="flex";
-  document.getElementById("btn-draw").style.display="none";
-}
 const map = L.map("map",{center:[52.65,-6.9],zoom:11});
 // Multiple imagery sources
 const esriLayer = L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{attribution:"© Esri",maxZoom:19});
@@ -430,25 +381,6 @@ function openPanel(p, pid) {
   },1200);
 }
 
-function getWaterloggingRisk(lat,lng){
-  const rain=MONTHLY_WX[new Date().getMonth()].rain;
-  const elevProxy=(lat-52.0)*80;
-  if(rain>70&&elevProxy<40)return"High";
-  if(rain>60||elevProxy<60)return"Medium";
-  return"Low";
-}
-function getDiseaseRisk(crop,m){
-  const hi=["Spring Barley","Winter Barley","Spring Wheat","Winter Wheat"];
-  const hm=[5,6,7,8];
-  const rain=MONTHLY_WX[m].rain;
-  if(hi.includes(crop)&&hm.includes(m)&&rain>60)return"High";
-  if(hi.includes(crop)&&hm.includes(m))return"Medium";
-  return"Low";
-}
-function getYieldEst(crop,ndvi){
-  const my={"Spring Barley":6.5,"Winter Barley":7.2,"Spring Wheat":7.0,"Winter Wheat":8.5,"Spring Oats":6.0,"Winter Oats":6.5,"Maize":12.0,"OSR":3.8,"Potatoes":45.0,"Beans":5.0};
-  return((my[crop]||6.0)*(0.6+ndvi*0.5)).toFixed(1);
-}
 function renderPanel(p, pid) {
   document.getElementById("pload").style.display="none";
   const sc = document.getElementById("pscroll");
@@ -468,8 +400,8 @@ function renderPanel(p, pid) {
   const traffic = moisture==="High"?"Fair":"Good";
   const today = new Date().toLocaleDateString("en-IE",{day:"numeric",month:"short",year:"numeric"});
   const recs = [];
-  if(p.conf < 40) recs.push({t:"w",icon:"🔴",h:"Low confidence — "+p.conf+"%",b:"Model confidence is low. This parcel has an ambiguous spectral signature. Ground truth verification recommended."});
-  else if(p.conf < 55) recs.push({t:"w",icon:"🟡",h:"Moderate confidence — "+p.conf+"%",b:"Prediction may be uncertain. Could be mixed cropping or atypical growth pattern."});
+  if(p.conf < 50) recs.push({t:"b",icon:"🔴",h:"Low confidence — "+p.conf+"%",b:"Model confidence is low. This parcel has an ambiguous spectral signature. Ground truth verification recommended."});
+  else if(p.conf < 65) recs.push({t:"w",icon:"🟡",h:"Moderate confidence — "+p.conf+"%",b:"Prediction may be uncertain. Could be mixed cropping or atypical growth pattern."});
   if(cond==="Excellent"||cond==="Good") recs.push({t:"good",h:"✅ Healthy crop",b:"Vegetation indices indicate good canopy development. No signs of stress detected from satellite data."});
   if(moisture==="High") recs.push({t:"warn",h:"⚠️ High soil moisture",b:"SMAP data indicates elevated soil moisture. Monitor drainage and avoid heavy machinery to prevent compaction."});
   if(si>=4) recs.push({t:"warn",h:"🚜 Harvest approaching",b:`${p.crop} is entering the harvest window. Monitor grain moisture and plan logistics. Expected: ${harvest}.`});
@@ -504,9 +436,6 @@ function renderPanel(p, pid) {
       <div class="ir"><span class="ii">💧</span><span class="il">Soil Moisture</span><span class="iv ${moisture==="Adequate"?"g":moisture==="High"?"w":"b"}">${moisture}</span></div>
       <div class="ir"><span class="ii">🚜</span><span class="il">Trafficability</span><span class="iv ${traffic==="Good"?"g":"w"}">${traffic}</span></div>
       <div class="ir"><span class="ii">☁️</span><span class="il">Cloud cover (7d)</span><span class="iv n">~45%</span></div>
-      <div class="ir"><span class="ii">🌊</span><span class="il">Waterlogging Risk</span><span class="iv n" id="wrisk">${getWaterloggingRisk(p.lat,p.lng)}</span></div>
-      <div class="ir"><span class="ii">🍄</span><span class="il">Disease Risk</span><span class="iv n" id="drisk">${getDiseaseRisk(p.crop,month)}</span></div>
-      <div class="ir"><span class="ii">📊</span><span class="il">Yield Estimate</span><span class="iv n" id="yest">${getYieldEst(p.crop,ndviNow)} t/ha</span></div>
     </div>
     <div class="cw"><div class="ct">NDVI History 2025</div><div class="cc"><canvas id="c1"></canvas></div></div>
     <div class="cw">
@@ -551,7 +480,6 @@ function renderPanel(p, pid) {
     </div>
     <div style="height:30px"></div>`;
 
-  
   requestAnimationFrame(()=>{
     if(chart1){chart1.destroy();chart1=null}
     if(chart2){chart2.destroy();chart2=null}
@@ -630,9 +558,6 @@ function toggleCropFill(on){showFill=on;Object.entries(layers).forEach(([pid,l])
 // ── DRAW ──
 const drawn=L.featureGroup().addTo(map);
 let drawMode=false;
-function toggleSidebar(){
-  document.getElementById("sidebar").classList.toggle("mobile-open");
-}
 function toggleDraw(){
   drawMode=!drawMode;
   document.getElementById("btn-draw").classList.toggle("on",drawMode);
