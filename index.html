@@ -551,6 +551,72 @@ function closePanel(){
 }
 
 // ── LAYER TOGGLES ──
+// Ireland tillage layer
+var irelandLayer = null;
+var irelandLoaded = false;
+
+function toggleIreland(on){
+  if(on && !irelandLoaded){
+    irelandLoaded = true;
+    document.getElementById("l-ireland").parentElement.style.color="#16a34a";
+    
+    // Show loading indicator
+    var info = L.control({position:"bottomleft"});
+    info.onAdd = function(){
+      var d = L.DomUtil.create("div","");
+      d.id = "ireland-loading";
+      d.style.cssText="background:#fff;padding:6px 10px;border-radius:6px;font-size:12px;border:1px solid #E2E8F0";
+      d.textContent="Loading Ireland tillage...";
+      return d;
+    };
+    info.addTo(map);
+
+    fetch("ireland_tillage.geojson")
+      .then(r=>r.json())
+      .then(gj=>{
+        var el=document.getElementById("ireland-loading");
+        if(el)el.remove();
+        
+        const IRELAND_COLORS = {
+          "Barley - Spring":"#D97706",
+          "Barley - Winter":"#92400E",
+          "Wheat - Winter":"#78350F",
+          "Wheat - Spring":"#CA8A04",
+          "Oats - Spring":"#65A30D",
+          "Oats - Winter":"#3F6212",
+          "Maize":"#16A34A",
+          "Oilseed Rape":"#EAB308",
+          "Rye":"#B45309"
+        };
+
+        irelandLayer = L.geoJSON(gj,{
+          style:f=>({
+            color:IRELAND_COLORS[f.properties.crop]||"#64748B",
+            weight:1.5,
+            fillOpacity:0.3,
+            fillColor:IRELAND_COLORS[f.properties.crop]||"#64748B"
+          }),
+          onEachFeature:(f,layer)=>{
+            layer.bindTooltip(
+              "<b>"+f.properties.crop+"</b><br>"+f.properties.area+" ha",
+              {sticky:true}
+            );
+          }
+        }).addTo(map);
+
+        // Update summary
+        document.getElementById("total-count").textContent="61,866";
+        document.getElementById("sb-count").textContent="61,866";
+        console.log("Ireland tillage loaded ✅");
+      })
+      .catch(e=>console.error("Failed:",e));
+  } else if(!on && irelandLayer){
+    map.removeLayer(irelandLayer);
+  } else if(on && irelandLayer){
+    map.addLayer(irelandLayer);
+  }
+}
+
 function toggleSat(on){on?map.addLayer(satLayer):map.removeLayer(satLayer)}
 function toggleParcels(on){Object.values(layers).forEach(l=>{l.setStyle({opacity:on?1:0})})}
 function toggleCropFill(on){showFill=on;Object.entries(layers).forEach(([pid,l])=>{if(pid!==activePid)l.setStyle({fillOpacity:on?0.35:0})})}
