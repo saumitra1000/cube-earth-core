@@ -400,8 +400,8 @@ function renderPanel(p, pid) {
   const traffic = moisture==="High"?"Fair":"Good";
   const today = new Date().toLocaleDateString("en-IE",{day:"numeric",month:"short",year:"numeric"});
   const recs = [];
-  if(p.conf < 50) recs.push({t:"b",icon:"🔴",h:"Low confidence — "+p.conf+"%",b:"Model confidence is low. This parcel has an ambiguous spectral signature. Ground truth verification recommended."});
-  else if(p.conf < 65) recs.push({t:"w",icon:"🟡",h:"Moderate confidence — "+p.conf+"%",b:"Prediction may be uncertain. Could be mixed cropping or atypical growth pattern."});
+  if(p.conf < 40) recs.push({t:"w",icon:"🔴",h:"Low confidence — "+p.conf+"%",b:"Model confidence is low. This parcel has an ambiguous spectral signature. Ground truth verification recommended."});
+  else if(p.conf < 55) recs.push({t:"w",icon:"🟡",h:"Moderate confidence — "+p.conf+"%",b:"Prediction may be uncertain. Could be mixed cropping or atypical growth pattern."});
   if(cond==="Excellent"||cond==="Good") recs.push({t:"good",h:"✅ Healthy crop",b:"Vegetation indices indicate good canopy development. No signs of stress detected from satellite data."});
   if(moisture==="High") recs.push({t:"warn",h:"⚠️ High soil moisture",b:"SMAP data indicates elevated soil moisture. Monitor drainage and avoid heavy machinery to prevent compaction."});
   if(si>=4) recs.push({t:"warn",h:"🚜 Harvest approaching",b:`${p.crop} is entering the harvest window. Monitor grain moisture and plan logistics. Expected: ${harvest}.`});
