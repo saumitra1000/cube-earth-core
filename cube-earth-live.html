@@ -483,6 +483,7 @@ function renderPanel(p, pid) {
     </div>
     <div style="height:30px"></div>`;
 
+  setTimeout(()=>{
   const wr=getWaterloggingRisk(p.lat,p.lng);
   const dr=getDiseaseRisk(p.crop,month);
   const ye=getYieldEst(p.crop,ndviNow);
@@ -492,6 +493,7 @@ function renderPanel(p, pid) {
   if(wEl){wEl.textContent=wr;wEl.className="iv "+(wr==="High"?"b":wr==="Medium"?"w":"g");}
   if(dEl){dEl.textContent=dr;dEl.className="iv "+(dr==="High"?"b":dr==="Medium"?"w":"g");}
   if(yEl){yEl.textContent=ye+" t/ha";}
+},100);
   requestAnimationFrame(()=>{
     if(chart1){chart1.destroy();chart1=null}
     if(chart2){chart2.destroy();chart2=null}
