@@ -326,16 +326,16 @@ const crops=[...new Set(Object.values(RAW).map(p=>p.crop))].sort();
 document.getElementById("legend").innerHTML='<div class="leg-title">Crop Types</div>'+crops.map(c=>'<div class="leg-item"><div class="leg-dot" style="background:'+(CROP_COLORS[c]||"#64748B")+'"></div>'+c+'</div>').join("");
 
 // Crop filter
-document.getElementById("crop-filter").innerHTML=crops.map(c=>'<label class="li"><input type="checkbox" checked onchange="filterCrop(\''+c+'\',this.parentElement)"><div class="ld" style="background:'+(CROP_COLORS[c]||"#64748B")+'"></div>'+c+'</label>').join("");
+document.getElementById("crop-filter").innerHTML=crops.map(c=>'<label class="li" onclick="filterCrop(\''+c+'\',this)"><input type="checkbox" checked><div class="ld" style="background:'+(CROP_COLORS[c]||"#64748B")+'"></div>'+c+'</label>').join("");
 
 function filterCrop(crop,el){
-  const on=el.querySelector("input").checked;
-  Object.entries(RAW).forEach(([pid,p])=>{
+  var cb=el.querySelector("input");
+  cb.checked=!cb.checked;
+  var on=cb.checked;
+  Object.entries(RAW).forEach(function(x){
+    var pid=x[0],p=x[1];
     if(p.crop===crop && layers[pid]){
-      try{
-        if(on){parcelGroup.addLayer(layers[pid]);}
-        else{parcelGroup.removeLayer(layers[pid]);}
-      }catch(e){}
+      try{on?parcelGroup.addLayer(layers[pid]):parcelGroup.removeLayer(layers[pid]);}catch(e){}
     }
   });
 }
