@@ -362,8 +362,8 @@ function toggleIreland(on){
     fetch("ireland_tillage.geojson").then(r=>r.json()).then(gj=>{
       var el=document.getElementById("irl-load");if(el)el.remove();
       irelandLayer=L.geoJSON(gj,{
-  style:f=>({color:IC[f.properties.crop]||"#64748B",weight:1.5,fillOpacity:0.25,fillColor:IC[f.properties.crop]||"#64748B",interactive:false}),
-  onEachFeature:(f,layer)=>{layer.bindTooltip("<b>"+f.properties.crop+"</b><br>"+f.properties.area+" ha",{sticky:true});}
+  style:f=>({color:IC[f.properties.crop]||"#64748B",weight:1.5,fillOpacity:0.2,fillColor:IC[f.properties.crop]||"#64748B"}),
+  interactive:false
 }).addTo(map);
 irelandLayer.bringToBack();
 var cb=document.getElementById("l-ireland");if(cb)cb.checked=true;
