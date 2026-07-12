@@ -6,7 +6,26 @@
 <title>Cube Earth — Field Intelligence</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js">
+function getWaterloggingRisk(lat,lng){
+  var rain=MONTHLY_WX[new Date().getMonth()].rain;
+  var elev=(lat-52.0)*80;
+  if(rain>70&&elev<40)return "High";
+  if(rain>60||elev<60)return "Medium";
+  return "Low";
+}
+function getDiseaseRisk(crop,m){
+  var hi=["Spring Barley","Winter Barley","Spring Wheat","Winter Wheat"];
+  var rain=MONTHLY_WX[m].rain;
+  if(hi.indexOf(crop)>=0&&[5,6,7,8].indexOf(m)>=0&&rain>60)return "High";
+  if(hi.indexOf(crop)>=0&&[5,6,7,8].indexOf(m)>=0)return "Medium";
+  return "Low";
+}
+function getYieldEst(crop,ndvi){
+  var my={"Spring Barley":6.5,"Winter Barley":7.2,"Spring Wheat":7.0,"Winter Wheat":8.5,"Spring Oats":6.0,"Winter Oats":6.5,"Maize":12.0,"OSR":3.8,"Potatoes":45.0,"Beans":5.0};
+  return ((my[crop]||6.0)*(0.6+ndvi*0.5)).toFixed(1);
+}
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <style>
@@ -385,6 +404,18 @@ function renderPanel(p, pid) {
   document.getElementById("pload").style.display="none";
   const sc = document.getElementById("pscroll");
   sc.style.display="block";
+  // Populate risk fields after innerHTML set
+  var _wr=getWaterloggingRisk(p.lat,p.lng);
+  var _dr=getDiseaseRisk(p.crop,month);
+  var _ye=getYieldEst(p.crop,ndviNow||0.5);
+  setTimeout(function(){
+    var we=document.getElementById("p-wrisk");
+    var de=document.getElementById("p-drisk");
+    var ye=document.getElementById("p-yest");
+    if(we){we.textContent=_wr;we.className="iv "+(_wr=="High"?"b":_wr=="Medium"?"w":"g");}
+    if(de){de.textContent=_dr;de.className="iv "+(_dr=="High"?"b":_dr=="Medium"?"w":"g");}
+    if(ye){ye.textContent=_ye+" t/ha";}
+  },50);
   const ndvi = NDVI_PROFILES[p.crop]||NDVI_PROFILES["Spring Barley"];
   const stages = STAGES[p.crop]||STAGES["Spring Barley"];
   const si = getStageIdx(p.crop);
@@ -436,6 +467,9 @@ function renderPanel(p, pid) {
       <div class="ir"><span class="ii">💧</span><span class="il">Soil Moisture</span><span class="iv ${moisture==="Adequate"?"g":moisture==="High"?"w":"b"}">${moisture}</span></div>
       <div class="ir"><span class="ii">🚜</span><span class="il">Trafficability</span><span class="iv ${traffic==="Good"?"g":"w"}">${traffic}</span></div>
       <div class="ir"><span class="ii">☁️</span><span class="il">Cloud cover (7d)</span><span class="iv n">~45%</span></div>
+      <div class="ir"><span class="ii">🌊</span><span class="il">Waterlogging Risk</span><span class="iv n" id="p-wrisk">—</span></div>
+      <div class="ir"><span class="ii">🍄</span><span class="il">Disease Risk</span><span class="iv n" id="p-drisk">—</span></div>
+      <div class="ir"><span class="ii">📊</span><span class="il">Yield Estimate</span><span class="iv n" id="p-yest">—</span></div>
     </div>
     <div class="cw"><div class="ct">NDVI History 2025</div><div class="cc"><canvas id="c1"></canvas></div></div>
     <div class="cw">
