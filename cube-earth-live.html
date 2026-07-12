@@ -464,9 +464,9 @@ function renderPanel(p, pid) {
       <div class="ir"><span class="ii">💧</span><span class="il">Soil Moisture</span><span class="iv ${moisture==="Adequate"?"g":moisture==="High"?"w":"b"}">${moisture}</span></div>
       <div class="ir"><span class="ii">🚜</span><span class="il">Trafficability</span><span class="iv ${traffic==="Good"?"g":"w"}">${traffic}</span></div>
       <div class="ir"><span class="ii">☁️</span><span class="il">Cloud cover (7d)</span><span class="iv n">~45%</span></div>
-      <div class="ir"><span class="ii">🌊</span><span class="il">Waterlogging Risk</span><span class="iv n" id="wrisk">—</span></div>
-      <div class="ir"><span class="ii">🍄</span><span class="il">Disease Risk</span><span class="iv n" id="drisk">—</span></div>
-      <div class="ir"><span class="ii">📊</span><span class="il">Yield Estimate</span><span class="iv n" id="yest">—</span></div>
+      <div class="ir"><span class="ii">🌊</span><span class="il">Waterlogging Risk</span><span class="iv n" id="wrisk">${getWaterloggingRisk(p.lat,p.lng)}</span></div>
+      <div class="ir"><span class="ii">🍄</span><span class="il">Disease Risk</span><span class="iv n" id="drisk">${getDiseaseRisk(p.crop,month)}</span></div>
+      <div class="ir"><span class="ii">📊</span><span class="il">Yield Estimate</span><span class="iv n" id="yest">${getYieldEst(p.crop,ndviNow)} t/ha</span></div>
     </div>
     <div class="cw"><div class="ct">NDVI History 2025</div><div class="cc"><canvas id="c1"></canvas></div></div>
     <div class="cw">
@@ -511,17 +511,7 @@ function renderPanel(p, pid) {
     </div>
     <div style="height:30px"></div>`;
 
-  setTimeout(()=>{
-  const wr=getWaterloggingRisk(p.lat,p.lng);
-  const dr=getDiseaseRisk(p.crop,month);
-  const ye=getYieldEst(p.crop,ndviNow);
-  const wEl=document.getElementById("wrisk");
-  const dEl=document.getElementById("drisk");
-  const yEl=document.getElementById("yest");
-  if(wEl){wEl.textContent=wr;wEl.className="iv "+(wr==="High"?"b":wr==="Medium"?"w":"g");}
-  if(dEl){dEl.textContent=dr;dEl.className="iv "+(dr==="High"?"b":dr==="Medium"?"w":"g");}
-  if(yEl){yEl.textContent=ye+" t/ha";}
-},100);
+  
   requestAnimationFrame(()=>{
     if(chart1){chart1.destroy();chart1=null}
     if(chart2){chart2.destroy();chart2=null}
