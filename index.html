@@ -365,8 +365,8 @@ function toggleIreland(on){
   style:f=>({color:IC[f.properties.crop]||"#64748B",weight:1.5,fillOpacity:0.25,fillColor:IC[f.properties.crop]||"#64748B",interactive:false}),
   onEachFeature:(f,layer)=>{layer.bindTooltip("<b>"+f.properties.crop+"</b><br>"+f.properties.area+" ha",{sticky:true});}
 }).addTo(map);
-irelandLayer.setZIndex(1);
-parcelGroup.setZIndex(2);var cb=document.getElementById("l-ireland");if(cb)cb.checked=true;
+irelandLayer.bringToBack();
+var cb=document.getElementById("l-ireland");if(cb)cb.checked=true;
       document.getElementById("total-count").textContent="61,866";document.getElementById("sb-count").textContent="61,866 (All Ireland)";
       document.getElementById("sb-count").textContent="61,866";
     }).catch(()=>{var el=document.getElementById("irl-load");if(el)el.remove();});
