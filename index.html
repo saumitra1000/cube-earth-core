@@ -330,7 +330,14 @@ document.getElementById("crop-filter").innerHTML=crops.map(c=>'<label class="li"
 
 function filterCrop(crop,el){
   const on=el.querySelector("input").checked;
-  Object.entries(RAW).forEach(([pid,p])=>{if(p.crop===crop){on?parcelGroup.addLayer(layers[pid]):parcelGroup.removeLayer(layers[pid]);}});
+  Object.entries(RAW).forEach(([pid,p])=>{
+    if(p.crop===crop && layers[pid]){
+      try{
+        if(on){parcelGroup.addLayer(layers[pid]);}
+        else{parcelGroup.removeLayer(layers[pid]);}
+      }catch(e){}
+    }
+  });
 }
 
 // Ireland tillage layer
