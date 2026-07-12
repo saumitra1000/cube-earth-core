@@ -111,25 +111,46 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
 
 /* ── MOBILE ── */
 @media (max-width: 768px) {
-  #topbar{padding:0 8px;gap:6px;height:50px}
-  #logo-text{font-size:14px}
+  #topbar{padding:0 8px;gap:5px;height:50px;flex-wrap:nowrap}
   #logo-sub{display:none}
-  #search-wrap{max-width:160px}
-  #search{font-size:12px;padding:6px 8px 6px 26px}
-  .tbtn{padding:5px 8px;font-size:11px}
-  #btn-draw span, #btn-draw{font-size:11px}
-  #app{flex-direction:column;top:50px}
-  #sidebar{width:100%;height:auto;max-height:0;overflow:hidden;border-right:none;border-bottom:1px solid #E2E8F0;transition:max-height 0.3s;padding:0}
-  #sidebar.mobile-open{max-height:300px;padding:10px;overflow-y:auto}
-  #map-wrap{flex:1;min-height:0}
-  #panel{width:100%;height:60vh;transform:translateY(100%);border-left:none;border-top:1.5px solid #E2E8F0;position:fixed;bottom:0;left:0;right:0;z-index:500}
-  #panel.open{transform:translateY(0)}
-  #pscroll{padding:12px}
-  .cg{grid-template-columns:1fr 1fr}
-  .sv{font-size:15px}
-  #stats-bar{left:0;font-size:9px;gap:8px;padding:0 8px}
-  #legend{display:none}
-  #img-switcher{display:none}
+  #search-wrap{flex:1;max-width:140px}
+  #search{font-size:12px;padding:6px 8px 6px 24px}
+  .tbtn{padding:5px 7px;font-size:11px;gap:3px}
+  #btn-draw{display:none}
+  #btn-menu{display:flex!important}
+  #app{flex-direction:column;top:50px;bottom:28px}
+  #sidebar{
+    width:100%;height:auto;max-height:0;
+    overflow:hidden;border-right:none;
+    border-bottom:1px solid #E2E8F0;
+    transition:max-height 0.3s ease;
+    padding:0;position:relative;z-index:100;
+    background:#fff;flex-shrink:0
+  }
+  #sidebar.mobile-open{max-height:50vh;padding:10px;overflow-y:auto}
+  #map-wrap{flex:1;min-height:200px}
+  #panel{
+    width:100%!important;
+    height:65vh!important;
+    transform:translateY(100%)!important;
+    border-left:none!important;
+    border-top:2px solid #16a34a!important;
+    border-radius:16px 16px 0 0!important;
+    position:fixed!important;
+    bottom:28px!important;left:0!important;right:0!important;
+    z-index:500!important;
+    box-shadow:0 -4px 20px rgba(0,0,0,.15)!important
+  }
+  #panel.open{transform:translateY(0)!important}
+  #pscroll{padding:12px!important}
+  #pclosebtn{top:12px!important;right:12px!important;font-size:20px!important}
+  .cg{grid-template-columns:1fr 1fr!important}
+  .sv{font-size:14px!important}
+  #stats-bar{left:0!important;font-size:9px!important;gap:6px!important;padding:0 8px!important}
+  #legend{display:none!important}
+  #img-switcher{display:none!important}
+  .tl{overflow-x:auto}
+  .sth{margin:10px 0 6px!important}
 }
 </style>
 </head>
