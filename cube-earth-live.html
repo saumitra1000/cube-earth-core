@@ -318,7 +318,7 @@ fetch("parcels.geojson")
     });
   });
 
-document.getElementById("total-count").textContent=Object.keys(RAW).length;
+document.getElementById("total-count").textContent="61,866 Ireland";
 document.getElementById("sb-count").textContent=Object.keys(RAW).length;
 
 // Legend
@@ -326,19 +326,29 @@ const crops=[...new Set(Object.values(RAW).map(p=>p.crop))].sort();
 document.getElementById("legend").innerHTML='<div class="leg-title">Crop Types</div>'+crops.map(c=>'<div class="leg-item"><div class="leg-dot" style="background:'+(CROP_COLORS[c]||"#64748B")+'"></div>'+c+'</div>').join("");
 
 // Crop filter
-document.getElementById("crop-filter").innerHTML=crops.map(c=>'<label class="li" onclick="filterCrop(\''+c+'\',this)"><input type="checkbox" checked><div class="ld" style="background:'+(CROP_COLORS[c]||"#64748B")+'"></div>'+c+'</label>').join("");
-
-function filterCrop(crop,el){
-  var cb=el.querySelector("input");
-  cb.checked=!cb.checked;
-  var on=cb.checked;
-  Object.entries(RAW).forEach(function(x){
-    var pid=x[0],p=x[1];
-    if(p.crop===crop && layers[pid]){
-      try{on?parcelGroup.addLayer(layers[pid]):parcelGroup.removeLayer(layers[pid]);}catch(e){}
-    }
+var cfEl=document.getElementById("crop-filter");
+cfEl.innerHTML="";
+crops.forEach(function(c){
+  var div=document.createElement("div");
+  div.className="li";
+  div.style.cursor="pointer";
+  var cb=document.createElement("input");
+  cb.type="checkbox";cb.checked=true;
+  cb.addEventListener("change",function(){
+    Object.entries(RAW).forEach(function(x){
+      if(x[1].crop===c&&layers[x[0]]){
+        try{cb.checked?parcelGroup.addLayer(layers[x[0]]):parcelGroup.removeLayer(layers[x[0]]);}catch(e){}
+      }
+    });
   });
-}
+  var dot=document.createElement("div");
+  dot.className="ld";dot.style.background=CROP_COLORS[c]||"#64748B";
+  var txt=document.createTextNode(c);
+  div.appendChild(cb);div.appendChild(dot);div.appendChild(txt);
+  cfEl.appendChild(div);
+});
+
+// filterCrop handled inline
 
 // Ireland tillage layer
 var irelandLayer=null,irelandLoaded=false;
@@ -355,7 +365,7 @@ function toggleIreland(on){
       document.getElementById("total-count").textContent="61,866";document.getElementById("sb-count").textContent="61,866 (All Ireland)";
       document.getElementById("sb-count").textContent="61,866";
     }).catch(()=>{var el=document.getElementById("irl-load");if(el)el.remove();});
-  }else if(!on&&irelandLayer){map.removeLayer(irelandLayer);document.getElementById("total-count").textContent=Object.keys(RAW).length;document.getElementById("sb-count").textContent=Object.keys(RAW).length;}
+  }else if(!on&&irelandLayer){map.removeLayer(irelandLayer);document.getElementById("total-count").textContent="61,866 Ireland";document.getElementById("sb-count").textContent=Object.keys(RAW).length;}
   else if(on&&irelandLayer){map.addLayer(irelandLayer);}
 }
 
