@@ -62,6 +62,14 @@ a{text-decoration:none;color:inherit}
 .section-title{font-size:32px;font-weight:800;letter-spacing:-0.5px;margin-bottom:14px;max-width:600px}
 .section-sub{font-size:16px;color:#64748B;line-height:1.6;max-width:600px;margin-bottom:50px}
 
+/* WORKFLOW STRIP */
+#workflow{padding:40px 24px;background:#fff;border-bottom:1px solid #F1F5F9}
+#workflow-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:10px}
+.wf-step{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:110px}
+.wf-icon{width:52px;height:52px;background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px}
+.wf-label{font-size:12px;font-weight:700;color:#475569;text-align:center}
+.wf-arrow{color:#BFDBFE;font-size:20px;margin:0 2px}
+
 /* HOW IT WORKS */
 #how{background:#fff}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
@@ -146,8 +154,10 @@ a{text-decoration:none;color:inherit}
       <a class="nav-link" href="#how">How it works</a>
       <a class="nav-link" href="#features">Features</a>
       <a class="nav-link" href="#mismatch">Verification</a>
-      <a class="nav-link" href="#honesty">Accuracy</a>
-      <a class="nav-link" href="#who">Who it's for</a>
+      <a class="nav-link" href="#why">Why Us</a>
+      <a class="nav-link" href="#pricing">Pricing</a>
+      <a class="nav-link" href="#faq">FAQ</a>
+      <a class="nav-link" href="#contact">Contact</a>
       <a id="nav-cta" href="cube-earth-live.html">Open Map →</a>
     </div>
   </div>
@@ -157,16 +167,17 @@ a{text-decoration:none;color:inherit}
   <div id="hero-inner">
     <div>
       <div id="hero-badge">🛰️ Live · Ireland · Sentinel-2 Satellite Data</div>
-      <h1>Satellite intelligence for <span>Ireland's tillage fields</span></h1>
-      <p>Cube Earth uses Sentinel-2 satellite imagery and machine learning to estimate crop type for every mapped parcel, with confidence scores, and highlights where those estimates differ from LPIS declarations — no farm visits required.</p>
+      <h1><span>Know what's growing</span> across Ireland's tillage fields — before you visit the farm</h1>
+      <p>Cube Earth is a satellite-powered field intelligence platform that helps agricultural professionals monitor crop development, compare predictions with declarations, and prioritise field inspections across Ireland.</p>
       <div class="hero-btns">
         <a class="btn-primary" href="cube-earth-live.html">Explore the Live Map →</a>
         <a class="btn-secondary" href="#how">How it works</a>
       </div>
+      <p style="font-size:15px;font-weight:700;color:#1E40AF;margin-bottom:20px">Monitor every mapped tillage parcel in Ireland from a single interface.</p>
       <div id="hero-stats">
         <div><div class="hstat-num">61,866</div><div class="hstat-label">Parcels mapped</div></div>
         <div><div class="hstat-num">71.7%</div><div class="hstat-label">Balanced accuracy</div></div>
-        <div><div class="hstat-num">23.6%</div><div class="hstat-label">Satellite prediction differs from LPIS</div></div>
+        <div><div class="hstat-num">23.6%</div><div class="hstat-label">Parcels flagged for review</div></div>
       </div>
     </div>
     <div id="hero-visual">
@@ -187,12 +198,26 @@ a{text-decoration:none;color:inherit}
   </div>
 </section>
 
+<section id="workflow">
+  <div id="workflow-inner">
+    <div class="wf-step"><div class="wf-icon">🛰️</div><div class="wf-label">Sentinel-2</div></div>
+    <div class="wf-arrow">→</div>
+    <div class="wf-step"><div class="wf-icon">🤖</div><div class="wf-label">Crop Prediction</div></div>
+    <div class="wf-arrow">→</div>
+    <div class="wf-step"><div class="wf-icon">📍</div><div class="wf-label">Parcel Intelligence</div></div>
+    <div class="wf-arrow">→</div>
+    <div class="wf-step"><div class="wf-icon">⚠️</div><div class="wf-label">Differences Identified</div></div>
+    <div class="wf-arrow">→</div>
+    <div class="wf-step"><div class="wf-icon">📄</div><div class="wf-label">Field Intelligence Report</div></div>
+  </div>
+</section>
+
 <div id="trust">
   <div id="trust-inner">
     <div class="trust-item"><div class="trust-num">4 years</div><div class="trust-label">Satellite history (2022–2025)</div></div>
     <div class="trust-item"><div class="trust-num">8</div><div class="trust-label">Tillage crop types classified</div></div>
     <div class="trust-item"><div class="trust-num">Free</div><div class="trust-label">ESA Sentinel-2 open data</div></div>
-    <div class="trust-item"><div class="trust-num">10-day</div><div class="trust-label">Update cycle</div></div>
+    <div class="trust-item"><div class="trust-num">~5 day</div><div class="trust-label">Sentinel-2 revisit (cloud-dependent)</div></div>
   </div>
 </div>
 
@@ -215,7 +240,7 @@ a{text-decoration:none;color:inherit}
       <div class="step-card">
         <div class="step-num">3</div>
         <h3>Verification & alerts</h3>
-        <p>We compare our detection against LPIS declarations and flag mismatches, track growth stage, and estimate harvest timing — all viewable on an interactive map.</p>
+        <p>We compare our crop predictions with LPIS declarations, highlight differences for review, estimate growth stage, and provide harvest timing insights — all within an interactive parcel map.</p>
       </div>
     </div>
   </div>
@@ -233,6 +258,21 @@ a{text-decoration:none;color:inherit}
       <div class="feat-card"><div class="feat-icon">🌿</div><h3>NDVI vegetation health</h3><p>Season-long vegetation index history for every field, updated as new satellite passes arrive.</p></div>
       <div class="feat-card"><div class="feat-icon">📅</div><h3>Harvest window estimates</h3><p>Estimated harvest window based on crop type and seasonal development.</p></div>
       <div class="feat-card"><div class="feat-icon">🌦️</div><h3>Weather integration</h3><p>7-day rainfall, temperature and wind forecasts overlaid on every field, in context.</p></div>
+      <div class="feat-card"><div class="feat-icon">🛰️</div><h3>Parcel-level analysis</h3><p>Every mapped LPIS parcel is analysed individually using Sentinel-2 imagery — not county or regional averages.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="why" style="background:#EFF6FF">
+  <div class="section-inner">
+    <div class="section-tag">Why Cube Earth</div>
+    <h2 class="section-title">Built to be nationwide, transparent, and field-specific</h2>
+    <div class="feat-grid">
+      <div class="feat-card"><div class="feat-icon">🇮🇪</div><h3>Nationwide coverage</h3><p>Analyse over 61,000 mapped tillage parcels across Ireland, not a sample region.</p></div>
+      <div class="feat-card"><div class="feat-icon">🛰️</div><h3>No hardware required</h3><p>Built entirely on freely available Sentinel-2 satellite imagery — nothing to install.</p></div>
+      <div class="feat-card"><div class="feat-icon">🔍</div><h3>Transparent AI</h3><p>Every prediction includes a calibrated confidence score — no black-box outputs.</p></div>
+      <div class="feat-card"><div class="feat-icon">📊</div><h3>Field-level insights</h3><p>Explore parcel histories, growth stages, and weather in one place.</p></div>
+      <div class="feat-card"><div class="feat-icon">📈</div><h3>Built for scale</h3><p>Designed to monitor thousands of fields simultaneously, not one at a time.</p></div>
     </div>
   </div>
 </section>
@@ -240,11 +280,11 @@ a{text-decoration:none;color:inherit}
 <section id="mismatch">
   <div id="mismatch-inner">
     <div>
-      <h2>Find out where declarations don't match reality</h2>
-      <p>Government schemes check whether a required action happened. Cube Earth checks something different — is the crop actually what was declared? Across all 61,866 parcels we've analysed, satellite detection disagrees with the LPIS declaration for a meaningful share of fields, some at high confidence.</p>
+      <h2>Find parcels where satellite evidence differs from LPIS declarations</h2>
+      <p>Government schemes check whether a required action happened. Cube Earth asks a different question: does the satellite evidence support the declared crop? Across all 61,866 parcels we've analysed, satellite detection disagrees with the LPIS declaration for a meaningful share of fields, some at high confidence.</p>
       <p>This matters for grain buyers verifying supplier claims, for insurers assessing risk, and for anyone who needs independent, field-level evidence that can help prioritize inspections.</p>
       <div class="mismatch-stat">
-        <div><div class="mstat-num">23.6%</div><div class="mstat-label">Overall mismatch rate</div></div>
+        <div><div class="mstat-num">23.6%</div><div class="mstat-label">Prediction–declaration differences</div></div>
         <div><div class="mstat-num">76.4%</div><div class="mstat-label">Confirmed matches</div></div>
       </div>
     </div>
@@ -262,7 +302,7 @@ a{text-decoration:none;color:inherit}
   <div class="section-inner">
     <div class="section-tag">Accuracy & transparency</div>
     <h2 class="section-title">We show our confidence — and our limits</h2>
-    <p class="section-sub">Every prediction includes a calibrated confidence score. We'd rather tell you what we don't know than hide it.</p>
+    <p class="section-sub">Every prediction includes a calibrated confidence score. We'd rather tell you what we don't know than hide it. High-confidence predictions are more reliable than low-confidence predictions and should be interpreted accordingly.</p>
     <div class="honesty-grid">
       <div class="honesty-card honesty-good">
         <h3>✅ What we've validated</h3>
@@ -270,7 +310,7 @@ a{text-decoration:none;color:inherit}
           <li>71.7% balanced accuracy nationally, tested on held-out data</li>
           <li>73–75% balanced accuracy in our core Carlow/Kilkenny reference region</li>
           <li>Confidence scores calibrated — 80% shown means ~80% actually correct</li>
-          <li>Tested against 5+ alternative approaches (SAR fusion, higher-resolution imagery) to confirm this is the strongest free-data approach available</li>
+          <li>Tested against multiple alternative approaches during development, including SAR fusion and higher-resolution optical imagery. For this project, the optical Sentinel-2 approach delivered the best validation performance</li>
         </ul>
       </div>
       <div class="honesty-card honesty-limit">
@@ -284,6 +324,12 @@ a{text-decoration:none;color:inherit}
         </ul>
       </div>
     </div>
+    <div style="margin-top:24px;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:14px;padding:22px;display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:18px">🟢</span><div><div style="font-size:13px;font-weight:700;margin-bottom:3px">High (80–100%)</div><div style="font-size:12px;color:#64748B;line-height:1.5">Prediction is usually reliable.</div></div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:18px">🟡</span><div><div style="font-size:13px;font-weight:700;margin-bottom:3px">Medium (50–79%)</div><div style="font-size:12px;color:#64748B;line-height:1.5">Similar crops may also fit the satellite signature.</div></div></div>
+      <div style="display:flex;gap:10px;align-items:flex-start"><span style="font-size:18px">🔴</span><div><div style="font-size:13px;font-weight:700;margin-bottom:3px">Low (&lt;50%)</div><div style="font-size:12px;color:#64748B;line-height:1.5">Use as a prompt for further review, not as a conclusion.</div></div></div>
+    </div>
+    <p style="margin-top:20px;font-size:12px;color:#94A3B8;line-height:1.6;max-width:700px">Cube Earth provides decision-support information and should not be used as the sole basis for regulatory or contractual decisions without additional verification.</p>
   </div>
 </section>
 
@@ -292,18 +338,69 @@ a{text-decoration:none;color:inherit}
     <div class="section-tag">Who it's for</div>
     <h2 class="section-title">Built for anyone who needs field-level answers, without a field visit</h2>
     <div class="feat-grid">
-      <div class="feat-card"><div class="feat-icon">🌾</div><h3>Grain buyers</h3><p>Verify supplier crop declarations before harvest, without relying on self-reporting alone.</p></div>
-      <div class="feat-card"><div class="feat-icon">🏦</div><h3>Agricultural lenders</h3><p>Cross-check declared land use as part of loan and subsidy risk assessment.</p></div>
-      <div class="feat-card"><div class="feat-icon">🛡️</div><h3>Crop insurers</h3><p>Independent evidence to support underwriting and claims review.</p></div>
       <div class="feat-card"><div class="feat-icon">🌱</div><h3>Agronomy consultants</h3><p>Monitor client fields at scale between site visits.</p></div>
-      <div class="feat-card"><div class="feat-icon">🏛️</div><h3>Government &amp; researchers</h3><p>Independent, field-level data to complement existing compliance systems.</p></div>
+      <div class="feat-card"><div class="feat-icon">🌾</div><h3>Grain buyers</h3><p>Verify supplier crop declarations before harvest, without relying on self-reporting alone.</p></div>
+      <div class="feat-card"><div class="feat-icon">🛡️</div><h3>Crop insurers</h3><p>Independent evidence to support underwriting and claims review.</p></div>
+      <div class="feat-card"><div class="feat-icon">🏦</div><h3>Agricultural lenders</h3><p>Cross-check declared land use as part of loan and subsidy risk assessment.</p></div>
       <div class="feat-card"><div class="feat-icon">🚜</div><h3>Large farming enterprises</h3><p>Monitor thousands of parcels from a single map, prioritising where to look first.</p></div>
+      <div class="feat-card"><div class="feat-icon">🏛️</div><h3>Government &amp; researchers</h3><p>Independent, field-level data to complement existing compliance systems.</p></div>
     </div>
   </div>
 </section>
 
+<section class="section" id="faq">
+  <div class="section-inner">
+    <div class="section-tag">FAQ</div>
+    <h2 class="section-title">Common questions</h2>
+    <div style="display:grid;gap:14px;max-width:750px">
+      <div style="border:1.5px solid #E2E8F0;border-radius:12px;padding:20px">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:8px">How accurate is Cube Earth?</h3>
+        <p style="font-size:14px;color:#64748B;line-height:1.6">71.7% balanced accuracy nationally, rising to 73–75% in our core Carlow/Kilkenny reference region, measured on held-out data not used in training. Confidence scores are calibrated so the displayed percentage reflects real-world reliability.</p>
+      </div>
+      <div style="border:1.5px solid #E2E8F0;border-radius:12px;padding:20px">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:8px">Can it identify every crop?</h3>
+        <p style="font-size:14px;color:#64748B;line-height:1.6">Currently we classify 8 tillage crop types (Barley, Wheat, Oats, Maize, Rye — Spring and Winter varieties). Grassland and other land uses are not yet covered. Spring cereals are harder to distinguish from one another than from Maize.</p>
+      </div>
+      <div style="border:1.5px solid #E2E8F0;border-radius:12px;padding:20px">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:8px">How often is the map updated?</h3>
+        <p style="font-size:14px;color:#64748B;line-height:1.6">Sentinel-2 revisits every ~5 days under ideal conditions; actual usable imagery depends on cloud cover. We reprocess as new clear imagery becomes available rather than on a fixed schedule.</p>
+      </div>
+      <div style="border:1.5px solid #E2E8F0;border-radius:12px;padding:20px">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:8px">Why does a prediction differ from an LPIS declaration?</h3>
+        <p style="font-size:14px;color:#64748B;line-height:1.6">A difference can mean the declaration doesn't match what's growing, or that our prediction is wrong — it's evidence to prompt review, not a verdict. Higher-confidence differences are more likely to reflect a genuine discrepancy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="pricing" style="background:#F8FAFC">
+  <div class="section-inner">
+    <div class="section-tag">Access</div>
+    <h2 class="section-title">Pricing</h2>
+    <p class="section-sub">Cube Earth is currently in early access. The live map is free to explore. For organisation-level access, custom reports, or API integration, get in touch and we'll work out what fits.</p>
+    <a class="btn-primary" href="#contact">Contact us →</a>
+  </div>
+</section>
+
+<section class="section" id="about">
+  <div class="section-inner">
+    <div class="section-tag">About</div>
+    <h2 class="section-title">Why we built this</h2>
+    <p class="section-sub" style="margin-bottom:0">Cube Earth started from a simple observation: satellite data that could verify agricultural declarations independently was either buried in government systems not built for buyers, or locked behind data-sharing agreements. We built a field intelligence platform using entirely open Sentinel-2 imagery and public LPIS parcel data, tested rigorously against alternative approaches, and designed to be honest about both what it can and cannot yet do.</p>
+  </div>
+</section>
+
+<section class="section" id="contact" style="background:#F8FAFC">
+  <div class="section-inner">
+    <div class="section-tag">Contact</div>
+    <h2 class="section-title">Get in touch</h2>
+    <p class="section-sub">Questions about accuracy, coverage, or organisation-level access — reach out directly.</p>
+    <a class="btn-primary" href="mailto:saumitra@cubed-earth.com">saumitra@cubed-earth.com →</a>
+  </div>
+</section>
+
 <section id="cta">
-  <h2>Explore every field in Ireland</h2>
+  <h2>Explore Ireland's tillage map</h2>
   <p>Free to use. No account required to browse the map.</p>
   <a class="btn-white" href="cube-earth-live.html">Open the Live Map →</a>
 </section>
