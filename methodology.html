@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Methodology — Cube Earth</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/methodology.css">
+</head>
+<body>
+
+<nav id="nav">
+  <div id="nav-inner">
+    <div id="logo">
+      <div id="logo-icon">🛰️</div>
+      <div id="logo-text">Cube Earth</div>
+    </div>
+    <a id="back" href="index.html">← Back to home</a>
+  </div>
+</nav>
+
+<div id="content">
+  <div class="page-tag">Methodology</div>
+  <h1>How Cube Earth works</h1>
+  <p class="subtitle">A complete, honest account of our data, methods, validation, and limitations — including approaches we tested and rejected.</p>
+
+  <div class="philosophy-box">
+    <h2>Why we're transparent about uncertainty</h2>
+    <p>Cube Earth is designed to support decision-making, not replace it. Every prediction includes a calibrated confidence score, and known limitations are published alongside model performance. When confidence is low, we recommend treating predictions as evidence for further review rather than definitive conclusions.</p>
+  </div>
+
+  <h2 class="section">Dataset</h2>
+  <p>Our production model is trained and validated on <strong>61,866 tillage parcels</strong> drawn from Ireland's Land Parcel Identification System (LPIS) 2024 dataset, published by the Department of Agriculture, Food and the Marine (DAFM) as open data.</p>
+  <div class="stat-row">
+    <div class="stat-box"><div class="num">1,547,508</div><div class="label">Total LPIS parcels, all land use</div></div>
+    <div class="stat-box"><div class="num">61,866</div><div class="label">Filtered to tillage crops</div></div>
+    <div class="stat-box"><div class="num">8</div><div class="label">Crop types classified</div></div>
+  </div>
+  <p>The eight tillage crop types are: Spring and Winter Barley, Spring and Winter Wheat, Spring and Winter Oats, Maize, and Rye. The LPIS <code>CROP</code> field serves two purposes in our system: as the ground-truth label for training, and as the "farmer declared" value we compare our satellite prediction against.</p>
+
+  <h2 class="section">Satellite data source</h2>
+  <p>We use <strong>Sentinel-2 Level-2A</strong> optical imagery, part of the European Space Agency's Copernicus programme, accessed via Element84's public AWS catalogue. This data is free, updated approximately every 5 days (cloud cover permitting), and requires no licensing for commercial use.</p>
+  <p>For each of Ireland's 18 Sentinel-2 tiles (MGRS grid squares), we select the lowest-cloud-cover scene available each month, across four full growing seasons (2022–2025), and extract reflectance values at each parcel's location.</p>
+
+  <h2 class="section">Feature engineering</h2>
+  <p>From the raw satellite reflectance bands, we compute three vegetation indices for each parcel, at 32 points across each year (approximately 11-day intervals, or "dekads"):</p>
+  <table>
+    <tr><th>Index</th><th>Formula</th><th>What it measures</th></tr>
+    <tr><td>NDVI</td><td>(NIR − Red) / (NIR + Red)</td><td>General vegetation greenness and density</td></tr>
+    <tr><td>NDRE</td><td>(NIR − Red Edge) / (NIR + Red Edge)</td><td>Chlorophyll content, sensitive to crop stress</td></tr>
+    <tr><td>NDII</td><td>(NIR − SWIR) / (NIR + SWIR)</td><td>Canopy water content</td></tr>
+  </table>
+  <p>Missing observations (due to cloud cover on a given date) are filled by linear interpolation across the year — verified to leave 0% of data points unfilled in our production dataset, so no artificial default values enter the model.</p>
+
+  <h2 class="section">Model training</h2>
+  <p>We use <strong>CatBoost</strong>, a gradient-boosted decision tree algorithm, trained as a multi-class classifier across the 8 crop types. Because Spring Barley alone accounts for over half of all tillage parcels (33,346 of 61,866 — a 65:1 ratio against the smallest class, Rye), we apply explicit class-weighting during training to prevent the model from simply defaulting to the majority class.</p>
+  <p>We tested this choice rather than assuming it: an identical Random Forest model, trained on the same features, achieved only 53.9% balanced accuracy compared to CatBoost's 71.7% — confirming that CatBoost's class-weighting handles this imbalance meaningfully better.</p>
+
+  <h2 class="section">Balanced accuracy methodology</h2>
+  <p>We report <strong>balanced accuracy</strong> rather than overall accuracy, because overall accuracy can be misleading when one class dominates the dataset. Balanced accuracy averages the recall (correct identification rate) across all 8 crop types equally, so performance on minority crops like Rye or Winter Oats counts as much as performance on Spring Barley.</p>
+  <div class="stat-row">
+    <div class="stat-box"><div class="num">71.7%</div><div class="label">Balanced accuracy, nationwide (61,866 parcels)</div></div>
+    <div class="stat-box"><div class="num">73–75%</div><div class="label">Balanced accuracy, Carlow/Kilkenny reference region</div></div>
+  </div>
+  <p>Both figures are measured on a held-out test set (20% of parcels), never seen during training.</p>
+
+  <h2 class="section">Confidence calibration</h2>
+  <p>Raw model output confidence is not automatically trustworthy — many machine learning models are systematically over- or under-confident. We tested our model's raw confidence against actual outcomes and found it was <strong>under-confident</strong>: at the 60–70% displayed confidence range, actual accuracy was 79.4%, a 14.5-point gap.</p>
+  <p>We corrected this using isotonic regression, fit on a held-out validation set, mapping raw confidence to true reliability <em>without changing which crop is predicted</em>. After calibration, the gap between displayed confidence and actual accuracy is under 4 percentage points across all confidence ranges — the confidence score shown on every parcel is a genuine estimate of reliability, not a marketing number.</p>
+
+  <h2 class="section">Known limitations</h2>
+  <div class="limitation-card"><p><strong>Spring cereal confusion.</strong> Spring Barley, Spring Oats, and Spring Wheat have overlapping growing seasons and similar spectral signatures, particularly around mid-March. These three crops are more often confused with each other than with Maize or Winter crops, which have more distinct growth patterns.</p></div>
+  <div class="limitation-card"><p><strong>Cloud cover sensitivity.</strong> Satellite observations are affected by cloud cover. Prediction confidence may decrease for parcels or time periods where limited clear imagery was available.</p></div>
+  <div class="limitation-card"><p><strong>Tillage crops only.</strong> The current model covers 8 tillage crop types. Grassland, permanent pasture, and other land uses are not yet classified.</p></div>
+  <div class="limitation-card"><p><strong>Model estimates, not field-verified dates.</strong> Growth stage and harvest window predictions are derived from the crop classification and typical phenology, not from direct field observation.</p></div>
+  <div class="limitation-card"><p><strong>Data density varies by year.</strong> 2024 had denser, cleaner satellite coverage than other years in our dataset, and the model relies on it somewhat more heavily — a known artefact of data availability, not an intentional design choice.</p></div>
+
+  <h2 class="section">Why SAR (radar) was not used in the production model</h2>
+  <p>Synthetic Aperture Radar (Sentinel-1) is often assumed to improve crop classification, since it works through cloud cover. We tested this assumption directly rather than assuming it, across five distinct architectures:</p>
+
+  <div class="rejected-card">
+    <div class="rtitle">Raw SAR features, early fusion (combined with optical)</div>
+    <p>Balanced accuracy dropped from 74.6% to approximately 69–74%, depending on configuration.</p>
+  </div>
+  <div class="rejected-card">
+    <div class="rtitle">Zonal polygon SAR statistics, early fusion</div>
+    <p>Balanced accuracy dropped significantly, from 73.7% to 64.9%.</p>
+  </div>
+  <div class="rejected-card">
+    <div class="rtitle">Late fusion (independent SAR + optical models, blended)</div>
+    <p>Balanced accuracy remained flat at 73.6–73.7% regardless of blend weighting between 0% and 50% SAR. SAR alone achieved only 12.7% (near-random for 8 classes).</p>
+  </div>
+  <div class="rejected-card">
+    <div class="rtitle">L-band SAR (NISAR / ALOS-2 PALSAR-2)</div>
+    <p>Not extracted after desk research. Published research confirms L-band HV polarisation requires 100m spatial resolution to achieve useful accuracy — incompatible with Irish field sizes, which average 4–8 hectares (roughly 200–280m per side).</p>
+  </div>
+
+  <p>We also evaluated higher-resolution commercial optical imagery (PlanetScope, 3m resolution) as an alternative, but were unable to obtain data access within the constraints of available trial and research-licensing programmes, all of which either required university/federal-research affiliation or explicitly prohibited commercial product development.</p>
+
+  <p><strong>Conclusion:</strong> for Irish dry-land cereal classification, Sentinel-2 optical data alone, with the feature engineering and calibration described above, represents the best-validated approach given freely available, commercially-usable data sources.</p>
+
+  <h2 class="section">Declaration comparison</h2>
+  <p>For each parcel, we compare our satellite-based crop prediction against the LPIS-declared crop. A difference does not necessarily mean the declaration is incorrect — it may also reflect a model error. We present this as evidence for further review, not as a determination of fact.</p>
+  <div class="stat-row">
+    <div class="stat-box"><div class="num">23.6%</div><div class="label">Parcels where prediction differs from declaration</div></div>
+    <div class="stat-box"><div class="num">76.4%</div><div class="label">Parcels where prediction matches declaration</div></div>
+  </div>
+
+  <p style="margin-top:40px;padding:20px;background:#F8FAFC;border-radius:10px;font-size:13px;color:#64748B">Cube Earth provides decision-support information and should not be used as the sole basis for regulatory or contractual decisions without additional verification.</p>
+</div>
+
+<div id="footer">
+  © 2026 Cube Earth. Built on Sentinel-2 (ESA/Copernicus) and Ireland LPIS 2024 (DAFM Open Data). &nbsp;·&nbsp; <a href="index.html">www.cubed-earth.com</a>
+</div>
+
+</body>
+</html>
