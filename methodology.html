@@ -93,9 +93,35 @@
     <p>Balanced accuracy remained flat at 73.6–73.7% regardless of blend weighting between 0% and 50% SAR. SAR alone achieved only 12.7% (near-random for 8 classes).</p>
   </div>
   <div class="rejected-card">
-    <div class="rtitle">L-band SAR (NISAR / ALOS-2 PALSAR-2)</div>
-    <p>Not extracted after desk research. Published research confirms L-band HV polarisation requires 100m spatial resolution to achieve useful accuracy — incompatible with Irish field sizes, which average 4–8 hectares (roughly 200–280m per side).</p>
+    <div class="rtitle">L-band SAR (NISAR) — see dedicated section below</div>
+    <p>An earlier version of this page stated L-band SAR required 100m resolution and was not tested. That claim was superseded by direct testing, described in detail below &mdash; the mission's actual resolution is compatible with Irish field sizes, and real data was extracted and evaluated.</p>
   </div>
+
+  <h2 class="section">L-band SAR (NISAR) — supplementary investigation</h2>
+  <p>We also directly tested L-band NISAR SAR data (not merely reviewed the literature) &mdash; the mission's 30m resolution is compatible with Irish field sizes, contrary to an earlier internal assumption. Real GCOV products were downloaded and tested across multiple feature configurations. As of this analysis, only 3 repeat-coverage dates existed for our specific parcels (NISAR's Ireland coverage is still building out); results below should be read as a preliminary but consistent finding, not as exhaustively validated as the C-band investigation above.</p>
+
+  <div class="rejected-card">
+    <div class="rtitle">Single-pixel sampling (dual-pol HH/HV, 3 dates: 26 Jun, 8 Jul, 20 Jul 2026)</div>
+    <p>Maize separated cleanly from other crops (HH: &minus;12.85dB vs. a &minus;15.2 to &minus;16.7dB cereal cluster). All cereal types (Barley, Oats, Wheat, Rye) remained entangled &mdash; roughly 1.5dB spread between their means, against 3.5&ndash;4dB of within-crop variance.</p>
+  </div>
+  <div class="rejected-card">
+    <div class="rtitle">Zonal averaging (5&times;5 pixel window)</div>
+    <p>No improvement over single-pixel sampling, tested on the full 28,480-sample dataset &mdash; this rules out speckle noise as the cause of the cereal-entanglement problem above.</p>
+  </div>
+  <div class="rejected-card">
+    <div class="rtitle">3-crop subset test (Maize / OSR / Potatoes), drying-rate features</div>
+    <p>60.0% accuracy vs. 56.3% majority baseline &mdash; but per-class analysis showed this was driven entirely by Maize (recall 1.00), while OSR and Potatoes remained largely unresolved. Not genuine 3-way separation.</p>
+  </div>
+  <div class="rejected-card">
+    <div class="rtitle">Same method, extended to all 8 crop types</div>
+    <p>Accuracy fell to 20.5%, below the 47.0% majority baseline &mdash; confirming the 3-class result above did not generalise.</p>
+  </div>
+  <div class="rejected-card">
+    <div class="rtitle">Combined C-band + L-band (644 Sentinel-1 features + 6 NISAR drying-rate features)</div>
+    <p>47.04% &mdash; statistically identical to the 47.04% majority baseline. A null result.</p>
+  </div>
+
+  <p><strong>NISAR conclusion:</strong> across every configuration tested &mdash; either band, raw or zonal-averaged, full-trajectory or curated, single-crop-family or full 8-class &mdash; Maize was the only crop reliably distinguishable via SAR. Cereal-vs-cereal discrimination failed consistently, with within-crop variance exceeding between-crop separation in every test. This is a genuine, tested null result, not one assumed from a resolution mismatch.</p>
 
   <p>We also evaluated higher-resolution commercial optical imagery (PlanetScope, 3m resolution) as an alternative, but were unable to obtain data access within the constraints of available trial and research-licensing programmes, all of which either required university/federal-research affiliation or explicitly prohibited commercial product development.</p>
 
