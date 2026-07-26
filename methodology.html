@@ -62,12 +62,11 @@
   <p>We report <strong>balanced accuracy</strong> rather than overall accuracy, because overall accuracy can be misleading when one class dominates the dataset. Balanced accuracy averages the recall (correct identification rate) across all 8 crop types equally, so performance on minority crops like Rye or Winter Oats counts as much as performance on Spring Barley.</p>
   <div class="stat-row">
     <div class="stat-box"><div class="num">77.05%</div><div class="label">Balanced accuracy, nationwide (61,566 parcels)</div></div>
-    <div class="stat-box"><div class="num">73–75%</div><div class="label">Balanced accuracy, Carlow/Kilkenny reference region</div></div>
   </div>
-  <p>Both figures are measured on a held-out test set (20% of parcels), never seen during training.</p>
+  <p>This figure is measured on a held-out test set (20% of parcels), never seen during training.</p>
 
   <h2 class="section">Confidence calibration</h2>
-  <p>Raw model output confidence is not automatically trustworthy — many machine learning models are systematically over- or under-confident. We tested our model's raw confidence against actual outcomes and found it was <strong>under-confident</strong>: at the 60–70% displayed confidence range, actual accuracy was 79.4%, a 14.5-point gap.</p>
+  <p>Raw model output confidence is not automatically trustworthy — many machine learning models are systematically over- or under-confident. We apply calibration as a standard step to every production model, rather than assuming any given model's raw confidence is already reliable.</p>
   <p>We corrected this using isotonic regression, fit on a held-out validation set, mapping raw confidence to true reliability <em>without changing which crop is predicted</em>. After calibration, the gap between displayed confidence and actual accuracy is under 4 percentage points across all confidence ranges — the confidence score shown on every parcel is a genuine estimate of reliability, not a marketing number.</p>
 
   <h2 class="section">Known limitations</h2>
