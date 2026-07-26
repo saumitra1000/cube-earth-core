@@ -39,14 +39,16 @@
   <p>The eight tillage crop types are: Spring and Winter Barley, Spring and Winter Wheat, Spring and Winter Oats, Maize, and Rye. The LPIS <code>CROP</code> field serves two purposes in our system: as the ground-truth label for training, and as the "farmer declared" value we compare our satellite prediction against.</p>
 
   <h2 class="section">Satellite data source</h2>
-  <p>We use <strong>Sentinel-2 Level-2A</strong> optical imagery, part of the European Space Agency's Copernicus programme, accessed via Element84's public AWS catalogue. This data is free, updated approximately every 5 days (cloud cover permitting), and requires no licensing for commercial use.</p>
-  <p>For each of Ireland's 18 Sentinel-2 tiles (MGRS grid squares), we select the lowest-cloud-cover scene available each month, across four full growing seasons (2022–2025), and extract reflectance values at each parcel's location.</p>
+  <p>Our production model uses <strong>HLSS30</strong>, the Harmonized Landsat Sentinel-2 product, accessed via NASA's AppEEARS platform. HLS combines observations from both Sentinel-2 (ESA/Copernicus) and Landsat 8/9 (NASA/USGS) into a single, consistent surface reflectance record, giving denser temporal coverage than Sentinel-2 alone. This data is free and requires no licensing for commercial use.</p>
+  <p>For each parcel, we extract reflectance values at 32 points per year (approximately 11-day "dekad" intervals), across four full growing seasons (2022–2025), with Fmask-based quality screening to exclude cloud, cloud-shadow, and snow-contaminated observations.</p>
 
   <h2 class="section">Feature engineering</h2>
-  <p>From the raw satellite reflectance bands, we compute three vegetation indices for each parcel, at 32 points across each year (approximately 11-day intervals, or "dekads"):</p>
+  <p>From the raw satellite reflectance bands, we compute five vegetation indices for each parcel, at 32 points across each year (approximately 11-day intervals, or "dekads") &mdash; 640 features total (32 dekads &times; 4 years &times; 5 indices):</p>
   <table>
     <tr><th>Index</th><th>Formula</th><th>What it measures</th></tr>
     <tr><td>NDVI</td><td>(NIR − Red) / (NIR + Red)</td><td>General vegetation greenness and density</td></tr>
+    <tr><td>EVI</td><td>2.5 &times; (NIR − Red) / (NIR + 6×Red − 7.5×Blue + 1)</td><td>Vegetation index adjusted for atmospheric and soil background effects</td></tr>
+    <tr><td>NDWI</td><td>(Green − NIR) / (Green + NIR)</td><td>Vegetation water content, canopy moisture</td></tr>
     <tr><td>NDRE</td><td>(NIR − Red Edge) / (NIR + Red Edge)</td><td>Chlorophyll content, sensitive to crop stress</td></tr>
     <tr><td>NDII</td><td>(NIR − SWIR) / (NIR + SWIR)</td><td>Canopy water content</td></tr>
   </table>
@@ -102,8 +104,8 @@
   <h2 class="section">Declaration comparison</h2>
   <p>For each parcel, we compare our satellite-based crop prediction against the LPIS-declared crop. A difference does not necessarily mean the declaration is incorrect — it may also reflect a model error. We present this as evidence for further review, not as a determination of fact.</p>
   <div class="stat-row">
-    <div class="stat-box"><div class="num">23.6%</div><div class="label">Parcels where prediction differs from declaration</div></div>
-    <div class="stat-box"><div class="num">76.4%</div><div class="label">Parcels where prediction matches declaration</div></div>
+    <div class="stat-box"><div class="num">18.1%</div><div class="label">Parcels where prediction differs from declaration</div></div>
+    <div class="stat-box"><div class="num">81.9%</div><div class="label">Parcels where prediction matches declaration</div></div>
   </div>
 
   <p style="margin-top:40px;padding:20px;background:#F8FAFC;border-radius:10px;font-size:13px;color:#64748B">Cube Earth provides decision-support information and should not be used as the sole basis for regulatory or contractual decisions without additional verification.</p>
