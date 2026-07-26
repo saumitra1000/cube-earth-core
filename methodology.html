@@ -33,7 +33,7 @@
   <p>Our production model is trained and validated on <strong>61,566 tillage parcels</strong> drawn from Ireland's Land Parcel Identification System (LPIS) 2024 dataset, published by the Department of Agriculture, Food and the Marine (DAFM) as open data.</p>
   <div class="stat-row">
     <div class="stat-box"><div class="num">1,547,508</div><div class="label">Total LPIS parcels, all land use</div></div>
-    <div class="stat-box"><div class="num">61,566</div><div class="label">Filtered to tillage crops</div></div>
+    <div class="stat-box"><div class="num">61,866</div><div class="label">Filtered to tillage crops</div></div>
     <div class="stat-box"><div class="num">8</div><div class="label">Crop types classified</div></div>
   </div>
   <p>The eight tillage crop types are: Spring and Winter Barley, Spring and Winter Wheat, Spring and Winter Oats, Maize, and Rye. The LPIS <code>CROP</code> field serves two purposes in our system: as the ground-truth label for training, and as the "farmer declared" value we compare our satellite prediction against.</p>
@@ -54,7 +54,7 @@
 
   <h2 class="section">Model training</h2>
   <p>We use <strong>CatBoost</strong>, a gradient-boosted decision tree algorithm, trained as a multi-class classifier across the 8 crop types. Because Spring Barley alone accounts for over half of all tillage parcels (33,346 of 61,566 — a 65:1 ratio against the smallest class, Rye), we apply explicit class-weighting during training to prevent the model from simply defaulting to the majority class.</p>
-  <p>We tested this choice rather than assuming it: an identical Random Forest model, trained on the same features, achieved only 53.9% balanced accuracy compared to CatBoost's 77.05% — confirming that CatBoost's class-weighting handles this imbalance meaningfully better.</p>
+  <p>We tested this choice rather than assuming it: an identical Random Forest model, trained on the same features, achieved only 52.54% balanced accuracy compared to CatBoost's 77.05% — confirming that CatBoost's class-weighting handles this imbalance meaningfully better.</p>
 
   <h2 class="section">Balanced accuracy methodology</h2>
   <p>We report <strong>balanced accuracy</strong> rather than overall accuracy, because overall accuracy can be misleading when one class dominates the dataset. Balanced accuracy averages the recall (correct identification rate) across all 8 crop types equally, so performance on minority crops like Rye or Winter Oats counts as much as performance on Spring Barley.</p>
