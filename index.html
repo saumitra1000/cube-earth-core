@@ -58,7 +58,7 @@
 
 <section id="workflow">
   <div id="workflow-inner">
-    <div class="wf-step"><div class="wf-icon">🛰️</div><div class="wf-label">Sentinel-2</div></div>
+    <div class="wf-step"><div class="wf-icon">🛰️</div><div class="wf-label">HLS Satellite</div></div>
     <div class="wf-arrow">→</div>
     <div class="wf-step"><div class="wf-icon">🤖</div><div class="wf-label">Crop Prediction</div></div>
     <div class="wf-arrow">→</div>
@@ -74,8 +74,8 @@
   <div id="trust-inner">
     <div class="trust-item"><div class="trust-num">4 years</div><div class="trust-label">Satellite history (2022–2025)</div></div>
     <div class="trust-item"><div class="trust-num">8</div><div class="trust-label">Tillage crop types classified</div></div>
-    <div class="trust-item"><div class="trust-num">Free</div><div class="trust-label">ESA Sentinel-2 open data</div></div>
-    <div class="trust-item"><div class="trust-num">~5 day</div><div class="trust-label">Sentinel-2 revisit (cloud-dependent)</div></div>
+    <div class="trust-item"><div class="trust-num">Free</div><div class="trust-label">HLS (Sentinel-2 + Landsat) open data</div></div>
+    <div class="trust-item"><div class="trust-num">~5 day</div><div class="trust-label">HLS revisit (cloud-dependent)</div></div>
   </div>
 </div>
 
@@ -88,7 +88,7 @@
       <div class="step-card">
         <div class="step-num">1</div>
         <h3>Satellite imagery</h3>
-        <p>Every 5 days, ESA's Sentinel-2 satellites capture optical imagery of every field in Ireland. We track vegetation indices (NDVI, NDRE, NDII) across the full growing season.</p>
+        <p>Every 5 days, ESA's Sentinel-2 and NASA's Landsat satellites capture optical imagery of every field in Ireland. We track vegetation indices (NDVI, EVI, NDWI, NDRE, NDII) across the full growing season.</p>
       </div>
       <div class="step-card">
         <div class="step-num">2</div>
@@ -116,7 +116,7 @@
       <div class="feat-card"><div class="feat-icon">🌿</div><h3>NDVI vegetation health</h3><p>Season-long vegetation index history for every field, updated as new satellite passes arrive.</p></div>
       <div class="feat-card"><div class="feat-icon">📅</div><h3>Harvest window estimates</h3><p>Estimated harvest window based on crop type and seasonal development.</p></div>
       <div class="feat-card"><div class="feat-icon">🌦️</div><h3>Weather integration</h3><p>7-day rainfall, temperature and wind forecasts overlaid on every field, in context.</p></div>
-      <div class="feat-card"><div class="feat-icon">🛰️</div><h3>Parcel-level analysis</h3><p>Every mapped LPIS parcel is analysed individually using Sentinel-2 imagery — not county or regional averages.</p></div>
+      <div class="feat-card"><div class="feat-icon">🛰️</div><h3>Parcel-level analysis</h3><p>Every mapped LPIS parcel is analysed individually using HLS satellite imagery — not county or regional averages.</p></div>
     </div>
   </div>
 </section>
@@ -127,7 +127,7 @@
     <h2 class="section-title">Built to be nationwide, transparent, and field-specific</h2>
     <div class="feat-grid">
       <div class="feat-card"><div class="feat-icon">🇮🇪</div><h3>Nationwide coverage</h3><p>Analyse over 61,000 mapped tillage parcels across Ireland, not a sample region.</p></div>
-      <div class="feat-card"><div class="feat-icon">🛰️</div><h3>No hardware required</h3><p>Built entirely on freely available Sentinel-2 satellite imagery — nothing to install.</p></div>
+      <div class="feat-card"><div class="feat-icon">🛰️</div><h3>No hardware required</h3><p>Built entirely on freely available HLS (Sentinel-2 + Landsat) satellite imagery — nothing to install.</p></div>
       <div class="feat-card"><div class="feat-icon">🔍</div><h3>Transparent AI</h3><p>Every prediction includes a calibrated confidence score — no black-box outputs.</p></div>
       <div class="feat-card"><div class="feat-icon">📊</div><h3>Field-level insights</h3><p>Explore parcel histories, growth stages, and weather in one place.</p></div>
       <div class="feat-card"><div class="feat-icon">📈</div><h3>Built for scale</h3><p>Designed to monitor thousands of fields simultaneously, not one at a time.</p></div>
@@ -166,9 +166,8 @@
         <h3>✅ What we've validated</h3>
         <ul>
           <li>77.05% balanced accuracy nationally, tested on held-out data</li>
-          <li>73–75% balanced accuracy in our core Carlow/Kilkenny reference region</li>
           <li>Confidence scores calibrated — 80% shown means ~80% actually correct</li>
-          <li>Tested against multiple alternative approaches during development, including SAR fusion and higher-resolution optical imagery. For this project, the optical Sentinel-2 approach delivered the best validation performance</li>
+          <li>Tested against multiple alternative approaches during development, including C-band and L-band SAR fusion (Sentinel-1 and NISAR) and higher-resolution optical imagery. For this project, HLS optical data (Sentinel-2 and Landsat combined) delivered the best validation performance</li>
         </ul>
       </div>
       <div class="honesty-card honesty-limit">
@@ -213,7 +212,7 @@
     <div style="display:grid;gap:14px;max-width:750px">
       <div style="border:1.5px solid #E2E8F0;border-radius:12px;padding:20px">
         <h3 style="font-size:15px;font-weight:700;margin-bottom:8px">How accurate is Cube Earth?</h3>
-        <p style="font-size:14px;color:#64748B;line-height:1.6">77.05% balanced accuracy nationally, rising to 73–75% in our core Carlow/Kilkenny reference region, measured on held-out data not used in training. Confidence scores are calibrated so the displayed percentage reflects real-world reliability.</p>
+        <p style="font-size:14px;color:#64748B;line-height:1.6">77.05% balanced accuracy nationally, measured on held-out data not used in training. Confidence scores are calibrated so the displayed percentage reflects real-world reliability.</p>
       </div>
       <div style="border:1.5px solid #E2E8F0;border-radius:12px;padding:20px">
         <h3 style="font-size:15px;font-weight:700;margin-bottom:8px">Can it identify every crop?</h3>
@@ -221,7 +220,7 @@
       </div>
       <div style="border:1.5px solid #E2E8F0;border-radius:12px;padding:20px">
         <h3 style="font-size:15px;font-weight:700;margin-bottom:8px">How often is the map updated?</h3>
-        <p style="font-size:14px;color:#64748B;line-height:1.6">Sentinel-2 revisits every ~5 days under ideal conditions; actual usable imagery depends on cloud cover. We reprocess as new clear imagery becomes available rather than on a fixed schedule.</p>
+        <p style="font-size:14px;color:#64748B;line-height:1.6">The underlying satellites revisit every ~5 days under ideal conditions; actual usable imagery depends on cloud cover. We reprocess as new clear imagery becomes available rather than on a fixed schedule.</p>
       </div>
       <div style="border:1.5px solid #E2E8F0;border-radius:12px;padding:20px">
         <h3 style="font-size:15px;font-weight:700;margin-bottom:8px">Why does a prediction differ from an LPIS declaration?</h3>
@@ -288,7 +287,7 @@
     <div class="footer-top">
       <div>
         <div class="footer-brand"><div id="logo-icon" style="width:28px;height:28px;font-size:14px">🛰️</div><span>Cube Earth</span></div>
-        <p>Satellite-based crop intelligence for Ireland, built on free ESA Sentinel-2 data and Irish LPIS parcel records. Independent, field-level crop verification without site visits.</p>
+        <p>Satellite-based crop intelligence for Ireland, built on free HLS (Sentinel-2 + Landsat) satellite data and Irish LPIS parcel records. Independent, field-level crop verification without site visits.</p>
       </div>
       <div class="footer-col">
         <h4>Product</h4>
@@ -310,7 +309,7 @@
       </div>
     </div>
     <div id="footer-bottom">
-      <span>© 2026 Cube Earth. Built on Sentinel-2 (ESA/Copernicus) and Ireland LPIS 2024 (DAFM Open Data).</span>
+      <span>© 2026 Cube Earth. Built on HLS &mdash; Sentinel-2 (ESA/Copernicus) and Landsat (NASA/USGS) &mdash; and Ireland LPIS 2024 (DAFM Open Data).</span>
       <span>www.cubed-earth.com</span>
     </div>
   </div>
