@@ -443,8 +443,8 @@ function renderPanel(p,pid){
     +'<div class="sth">Satellite Observations</div>'
     +'<div class="icard">'
     +'<div class="ir"><span class="ii">🌿</span><span class="il">NDVI (Vegetation)</span><span class="iv '+(ndviNow>.6?"g":ndviNow>.4?"w":"b")+'">'+ndviNow.toFixed(2)+'</span></div>'
-    +'<div class="ir"><span class="ii">💧</span><span class="il">Soil Moisture</span><span class="iv n" id="soil-moisture-val">Loading…</span></div>'
-    +'<div class="ir"><span class="ii">🚜</span><span class="il">Trafficability</span><span class="iv n" id="trafficability-val">Loading…</span></div>'
+    +'<div class="ir"><span class="ii">💧</span><span class="il">Soil Moisture (estimate)</span><span class="iv n" id="soil-moisture-val">Loading…</span></div>'
+    
     +'<div class="ir"><span class="ii">☁️</span><span class="il">Cloud cover (7d)</span><span class="iv n">~45%</span></div>'
     +'</div>'
     +'<div class="sth">NDVI History 2025</div>'
@@ -503,12 +503,6 @@ function fetchWeather(lat,lng){
         var moistureCls = avgMoisture>0.30?"w":avgMoisture>0.18?"g":"b";
         var sm=document.getElementById("soil-moisture-val");
         if(sm){sm.textContent=moistureLabel+" ("+moisturePct+"%)";sm.className="iv "+moistureCls;}
-        var tf=document.getElementById("trafficability-val");
-        if(tf){
-          var tfLabel = avgMoisture>0.30?"Fair":"Good";
-          tf.textContent=tfLabel;
-          tf.className="iv "+(tfLabel==="Good"?"g":"w");
-        }
       }
     }catch(e){}
   };
