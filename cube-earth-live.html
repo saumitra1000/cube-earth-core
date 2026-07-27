@@ -420,7 +420,7 @@ function renderPanel(p,pid){
   if(p.conf<40)recs.push({t:"b",icon:"🔴",h:"Low confidence — "+p.conf+"%",b:"Model confidence is low. Ambiguous spectral signature. Ground truth verification recommended."});
   else if(p.conf<55)recs.push({t:"w",icon:"🟡",h:"Moderate confidence — "+p.conf+"%",b:"Prediction may be uncertain. Could be mixed cropping or atypical growth pattern."});
   if(cond==="Excellent"||cond==="Good")recs.push({t:"g",icon:"🟢",h:"Healthy crop",b:"Vegetation indices indicate good canopy development. No signs of stress detected from satellite data."});
-  if(moisture==="High")recs.push({t:"w",icon:"🟡",h:"High soil moisture",b:"Elevated soil moisture. Avoid heavy machinery. Monitor drainage to prevent waterlogging and compaction."});
+  // Soil moisture recommendation removed - was based on fake calendar lookup, not real data
   if(si>=4&&si<6)recs.push({t:"w",icon:"🟡",h:"Harvest window approaching",b:p.crop+" is approaching harvest. Monitor grain/seed moisture. Estimated window: "+(HARVEST[p.crop]||"Aug–Sep")+"."});
   if(si>=6)recs.push({t:"w",icon:"🟡",h:"Ready to harvest",b:"Crop is at or near harvest stage. Plan logistics and check weather window."});
   recs.push({t:"g",icon:"🟢",h:"Next satellite pass",b:"Sentinel-2 revisit in ~4 days. Updated NDVI and vegetation maps will be available."});
@@ -443,8 +443,8 @@ function renderPanel(p,pid){
     +'<div class="sth">Satellite Observations</div>'
     +'<div class="icard">'
     +'<div class="ir"><span class="ii">🌿</span><span class="il">NDVI (Vegetation)</span><span class="iv '+(ndviNow>.6?"g":ndviNow>.4?"w":"b")+'">'+ndviNow.toFixed(2)+'</span></div>'
-    +'<div class="ir"><span class="ii">💧</span><span class="il">Soil Moisture</span><span class="iv '+(moisture==="Adequate"?"g":moisture==="High"?"w":"b")+'">'+moisture+'</span></div>'
-    +'<div class="ir"><span class="ii">🚜</span><span class="il">Trafficability</span><span class="iv '+(traffic==="Good"?"g":"w")+'">'+traffic+'</span></div>'
+    +'<div class="ir"><span class="ii">💧</span><span class="il">Soil Moisture</span><span class="iv n" id="soil-moisture-val">Loading…</span></div>'
+    +'<div class="ir"><span class="ii">🚜</span><span class="il">Trafficability</span><span class="iv n" id="trafficability-val">Loading…</span></div>'
     +'<div class="ir"><span class="ii">☁️</span><span class="il">Cloud cover (7d)</span><span class="iv n">~45%</span></div>'
     +'</div>'
     +'<div class="sth">NDVI History 2025</div>'
@@ -480,10 +480,11 @@ function renderPanel(p,pid){
 // Weather API
 function fetchWeather(lat,lng){
   var xhr=new XMLHttpRequest();
-  xhr.open("GET","https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lng+"&daily=rain_sum,temperature_2m_max,temperature_2m_min,wind_speed_10m_max&forecast_days=7&timezone=UTC",true);
+  xhr.open("GET","https://api.open-meteo.com/v1/forecast?latitude="+lat+"&longitude="+lng+"&daily=rain_sum,temperature_2m_max,temperature_2m_min,wind_speed_10m_max&hourly=soil_moisture_0_to_1cm,soil_moisture_1_to_3cm&forecast_days=7&timezone=UTC",true);
   xhr.onload=function(){
     try{
-      var d=JSON.parse(xhr.responseText).daily;
+      var data=JSON.parse(xhr.responseText);
+      var d=data.daily;
       var rain=d.rain_sum.reduce(function(a,b){return a+(b||0);},0).toFixed(0);
       var tmax=Math.max.apply(null,d.temperature_2m_max).toFixed(0);
       var tmin=Math.min.apply(null,d.temperature_2m_min).toFixed(0);
@@ -491,6 +492,24 @@ function fetchWeather(lat,lng){
       var r=document.getElementById("wx-rain");if(r)r.textContent=rain+" mm";
       var t=document.getElementById("wx-temp");if(t)t.textContent=tmin+"\u2013"+tmax+"\u00b0C";
       var w=document.getElementById("wx-wind");if(w)w.textContent=wind+" km/h";
+
+      // Real soil moisture from Open-Meteo (m3/m3 volumetric water content, top 1cm)
+      var h=data.hourly;
+      if(h&&h.soil_moisture_0_to_1cm&&h.soil_moisture_0_to_1cm.length>0){
+        var validVals=h.soil_moisture_0_to_1cm.filter(function(v){return v!==null&&v!==undefined;});
+        var avgMoisture=validVals.reduce(function(a,b){return a+b;},0)/validVals.length;
+        var moisturePct=(avgMoisture*100).toFixed(0);
+        var moistureLabel = avgMoisture>0.30?"High":avgMoisture>0.18?"Adequate":"Low";
+        var moistureCls = avgMoisture>0.30?"w":avgMoisture>0.18?"g":"b";
+        var sm=document.getElementById("soil-moisture-val");
+        if(sm){sm.textContent=moistureLabel+" ("+moisturePct+"%)";sm.className="iv "+moistureCls;}
+        var tf=document.getElementById("trafficability-val");
+        if(tf){
+          var tfLabel = avgMoisture>0.30?"Fair":"Good";
+          tf.textContent=tfLabel;
+          tf.className="iv "+(tfLabel==="Good"?"g":"w");
+        }
+      }
     }catch(e){}
   };
   xhr.send();
