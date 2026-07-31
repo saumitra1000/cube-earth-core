@@ -409,8 +409,6 @@ function renderPanel(p,pid){
   const atHarvest=si>=5;
   const cond=(harvestCrops.includes(p.crop)&&atHarvest)?(ndviNow<.35?"Ready to Harvest":"Ripening"):(ndviNow>.7?"Excellent":ndviNow>.55?"Good":ndviNow>.4?"Fair":"Poor");
   const condCls=cond==="Excellent"||cond==="Good"||cond==="Ready to Harvest"?"g":cond==="Fair"||cond==="Ripening"?"w":"b";
-  const moisture=[5,4,6,7,6,5,4,4,5,6,7,6][month]>5?"High":ndviNow>.5?"Adequate":"Low";
-  const traffic=moisture==="High"?"Fair":"Good";
   const wx=MONTHLY_WX[month];
 
   const recs=[];
@@ -499,7 +497,7 @@ function fetchWeather(lat,lng){
         var validVals=h.soil_moisture_0_to_1cm.filter(function(v){return v!==null&&v!==undefined;});
         var avgMoisture=validVals.reduce(function(a,b){return a+b;},0)/validVals.length;
         var moisturePct=(avgMoisture*100).toFixed(0);
-        var moistureLabel = avgMoisture>0.30?"High":avgMoisture>0.18?"Adequate":"Low";
+        var moistureLabel = avgMoisture>0.30?"High":avgMoisture>0.18?"Medium":"Low";
         var moistureCls = avgMoisture>0.30?"w":avgMoisture>0.18?"g":"b";
         var sm=document.getElementById("soil-moisture-val");
         if(sm){sm.textContent=moistureLabel+" ("+moisturePct+"%)";sm.className="iv "+moistureCls;}
