@@ -106,7 +106,7 @@ for i, c in enumerate(bgcolors):
     style_cmds.append(('BACKGROUND', (i,0), (i,0), c))
 stage_table.setStyle(TableStyle(style_cmds))
 story.append(stage_table)
-story.append(Spacer(1, 5*mm))
+story.append(Spacer(1, 9*mm))
 
 story.append(Paragraph('NDVI Seasonal Profile', styles['H2']))
 story.append(Image('ndvi_chart.png', width=170*mm, height=55*mm))
