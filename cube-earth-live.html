@@ -415,8 +415,8 @@ function renderPanel(p,pid){
   if(p.match===false&&p.conf>=60)recs.push({t:"b",icon:"🔴",h:"High confidence mismatch with LPIS",b:"Satellite strongly suggests "+p.crop+" but farmer declared "+p.lpis+". This parcel may warrant ground inspection."});
   else if(p.match===false&&p.conf>=40)recs.push({t:"w",icon:"🟡",h:"Possible mismatch with LPIS",b:"Satellite indicates "+p.crop+" but LPIS shows "+p.lpis+". Could be model uncertainty or incorrect declaration."});
   else if(p.match===true)recs.push({t:"g",icon:"🟢",h:"LPIS Declaration Confirmed",b:"The satellite estimate is consistent with the declared crop ("+p.crop+"). No discrepancies were identified for this parcel."});
-  if(p.conf<40)recs.push({t:"b",icon:"🔴",h:"Low confidence — "+p.conf+"%",b:"Model confidence is low. Ambiguous spectral signature. Ground truth verification recommended."});
-  else if(p.conf<55)recs.push({t:"w",icon:"🟡",h:"Moderate confidence — "+p.conf+"%",b:"Prediction may be uncertain. Could be mixed cropping or atypical growth pattern."});
+  if(p.conf<50)recs.push({t:"b",icon:"🔴",h:"Low confidence — "+p.conf+"%",b:"Model confidence is low. Ambiguous spectral signature. Ground truth verification recommended."});
+  else if(p.conf<80)recs.push({t:"w",icon:"🟡",h:"Medium confidence — "+p.conf+"%",b:"Prediction may be uncertain. Could be mixed cropping or atypical growth pattern."});
   if(cond==="Excellent"||cond==="Good")recs.push({t:"g",icon:"🟢",h:"Healthy crop",b:"Vegetation indices indicate good canopy development. No signs of stress detected from satellite data."});
   // Soil moisture recommendation removed - was based on fake calendar lookup, not real data
   if(si>=4&&si<6)recs.push({t:"w",icon:"🟡",h:"Harvest window approaching",b:p.crop+" is approaching harvest. Monitor grain/seed moisture. Estimated window: "+(HARVEST[p.crop]||"Aug–Sep")+"."});
