@@ -2,7 +2,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import mm
 from reportlab.lib import colors
 from reportlab.platypus import (SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle,
-                                  Image, HRFlowable, PageBreak)
+                                  Image, HRFlowable, PageBreak, KeepTogether)
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_CENTER
 from PIL import Image as PILImage
@@ -108,8 +108,7 @@ stage_table.setStyle(TableStyle(style_cmds))
 story.append(stage_table)
 story.append(Spacer(1, 9*mm))
 
-story.append(Paragraph('NDVI Seasonal Profile', styles['H2']))
-story.append(Image('ndvi_chart.png', width=170*mm, height=55*mm))
+story.append(KeepTogether([Paragraph('NDVI Seasonal Profile', styles['H2']), Image('ndvi_chart.png', width=170*mm, height=55*mm)]))
 story.append(Spacer(1, 4*mm))
 
 story.append(Paragraph('Satellite Observations', styles['H2']))
