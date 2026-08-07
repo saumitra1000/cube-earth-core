@@ -407,7 +407,7 @@ function renderPanel(p,pid){
   const stages=STAGES[cropKey]||STAGES["Spring Barley"];
   const si=getStageIdx(p.crop);
   const ndviNow=ndvi[month];
-  const harvestCrops=["OSR","Winter Barley","Winter Wheat","Winter Oats"];
+  const harvestCrops=["OSR","Winter Barley","Winter Wheat","Winter Oats","Spring Barley","Spring Wheat","Spring Oats"];
   const atHarvest=si>=5;
   const cond=(harvestCrops.includes(cropKey)&&atHarvest)?(ndviNow<.35?"Ready to Harvest":"Ripening"):(ndviNow>.7?"Excellent":ndviNow>.55?"Good":ndviNow>.4?"Fair":"Poor");
   const condCls=cond==="Excellent"||cond==="Good"||cond==="Ready to Harvest"?"g":cond==="Fair"||cond==="Ripening"?"w":"b";
