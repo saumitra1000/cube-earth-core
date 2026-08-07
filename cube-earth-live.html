@@ -261,14 +261,15 @@ const CROP_COLORS={"Spring Barley":"#D97706","Winter Barley":"#92400E","Spring W
 const CROP_ICONS={"Spring Barley":"🌾","Winter Barley":"🌾","Spring Wheat":"🌿","Winter Wheat":"🌿","Spring Oats":"🌱","Winter Oats":"🌱","Maize":"🌽","OSR":"🌻","Potatoes":"🥔","Beans":"🫘","Rye":"🌾","Barley - Spring":"🌾","Barley - Winter":"🌾","Wheat - Spring":"🌿","Wheat - Winter":"🌿","Oats - Spring":"🌱","Oats - Winter":"🌱","Oilseed Rape":"🌻"};
 const NDVI_PROFILES={"Spring Barley":[.22,.24,.32,.44,.64,.84,.76,.38,.22,.22,.22,.22],"Winter Barley":[.44,.54,.64,.74,.88,.68,.36,.20,.20,.22,.32,.42],"Spring Wheat":[.22,.22,.30,.42,.62,.80,.70,.35,.22,.22,.22,.22],"Winter Wheat":[.52,.58,.66,.76,.84,.78,.56,.28,.22,.22,.32,.46],"Spring Oats":[.22,.22,.30,.40,.60,.78,.72,.36,.22,.22,.22,.22],"Winter Oats":[.40,.50,.60,.68,.80,.70,.40,.22,.22,.22,.30,.38],"Maize":[.20,.20,.20,.22,.40,.62,.80,.86,.64,.28,.20,.20],"OSR":[.54,.58,.74,.88,.72,.46,.26,.20,.20,.32,.44,.52],"Potatoes":[.20,.20,.20,.30,.54,.78,.82,.72,.44,.20,.20,.20],"Beans":[.22,.22,.22,.32,.58,.80,.84,.62,.30,.22,.22,.22]};
 const STAGES={"Spring Barley":["Germination","Tillering","Stem Ext.","Heading","Grain Fill","Ripening","Harvest"],"Winter Barley":["Tillering","Vernalisation","Stem Ext.","Heading","Grain Fill","Ripening","Harvest"],"Spring Wheat":["Germination","Tillering","Stem Ext.","Heading","Grain Fill","Ripening","Harvest"],"Winter Wheat":["Tillering","Vernalisation","Stem Ext.","Heading","Grain Fill","Ripening","Harvest"],"Spring Oats":["Germination","Tillering","Stem Ext.","Heading","Grain Fill","Ripening","Harvest"],"Winter Oats":["Tillering","Vernalisation","Stem Ext.","Heading","Grain Fill","Ripening","Harvest"],"Maize":["Emergence","Vegetative","Tasselling","Silking","Grain Fill","Dough","Maturity"],"OSR":["Rosette","Vernalisation","Flowering","Pod Fill","Ripening","Harvest","Stubble"],"Potatoes":["Emergence","Vegetative","Tuber Init","Bulking","Maturation","Senescence","Harvest"],"Beans":["Germination","Vegetative","Flowering","Pod Set","Pod Fill","Maturation","Harvest"]};
-const M2S={"Spring Barley":[0,0,1,1,2,3,4,5,6,6,0,0],"Winter Barley":[1,1,2,3,4,4,5,6,0,0,0,1],"Maize":[0,0,0,0,1,2,3,4,5,6,0,0],"OSR":[1,1,2,3,4,4,5,6,0,0,0,1],"Potatoes":[0,0,0,1,2,3,4,5,6,6,0,0]};
+const M2S={"Spring Barley":[0,0,1,1,2,3,4,5,6,6,0,0],"Winter Barley":[1,1,2,3,4,4,5,6,0,0,0,1],"Spring Wheat":[0,0,1,1,2,3,4,5,6,6,0,0],"Winter Wheat":[1,1,2,3,4,4,5,6,0,0,0,1],"Spring Oats":[0,0,1,1,2,3,4,5,6,6,0,0],"Winter Oats":[1,1,2,3,4,4,5,6,0,0,0,1],"Maize":[0,0,0,0,1,2,3,4,5,6,0,0],"OSR":[1,1,2,3,4,4,5,6,0,0,0,1],"Potatoes":[0,0,0,1,2,3,4,5,6,6,0,0],"Beans":[0,0,0,1,2,3,4,5,6,6,0,0]};
 const HARVEST={"Spring Barley":"12–18 Aug","Winter Barley":"20–25 Jul","Spring Wheat":"15–20 Aug","Winter Wheat":"25–30 Jul","Spring Oats":"18–25 Aug","Winter Oats":"20–26 Jul","Maize":"5–15 Oct","OSR":"18–22 Jul","Potatoes":"1–15 Sep","Beans":"20–30 Aug"};
 const MONTHLY_WX=[{rain:65,tmin:3,tmax:8,wind:22},{rain:52,tmin:3,tmax:8,wind:20},{rain:55,tmin:4,tmax:10,wind:18},{rain:50,tmin:5,tmax:13,wind:16},{rain:58,tmin:7,tmax:15,wind:15},{rain:62,tmin:10,tmax:17,wind:14},{rain:67,tmin:12,tmax:19,wind:14},{rain:77,tmin:12,tmax:18,wind:15},{rain:72,tmin:10,tmax:16,wind:16},{rain:76,tmin:7,tmax:13,wind:18},{rain:72,tmin:4,tmax:10,wind:20},{rain:69,tmin:3,tmax:8,wind:22}];
 const month=new Date().getMonth();
 const mLbl=["J","F","M","A","M","J","J","A","S","O","N","D"];
 const today=new Date().toLocaleDateString("en-IE",{day:"numeric",month:"short",year:"numeric"});
 
-function getStageIdx(crop){return(M2S[crop]||M2S["Spring Barley"])[month];}
+function normalizeCropKey(crop){if(!crop)return crop;var parts=crop.split(" - ");return parts.length===2?parts[1]+" "+parts[0]:crop;}
+function getStageIdx(crop){var k=normalizeCropKey(crop);return(M2S[k]||M2S["Spring Barley"])[month];}
 
 // ── MAP ──
 const map=L.map("map",{center:[52.65,-6.9],zoom:11,zoomControl:true});
@@ -401,13 +402,14 @@ function renderPanel(p,pid){
   document.getElementById("pload").style.display="none";
   const sc=document.getElementById("pscroll");
   sc.style.display="block";
-  const ndvi=NDVI_PROFILES[p.crop]||NDVI_PROFILES["Spring Barley"];
-  const stages=STAGES[p.crop]||STAGES["Spring Barley"];
+  const cropKey=normalizeCropKey(p.crop);
+  const ndvi=NDVI_PROFILES[cropKey]||NDVI_PROFILES["Spring Barley"];
+  const stages=STAGES[cropKey]||STAGES["Spring Barley"];
   const si=getStageIdx(p.crop);
   const ndviNow=ndvi[month];
   const harvestCrops=["OSR","Winter Barley","Winter Wheat","Winter Oats"];
   const atHarvest=si>=5;
-  const cond=(harvestCrops.includes(p.crop)&&atHarvest)?(ndviNow<.35?"Ready to Harvest":"Ripening"):(ndviNow>.7?"Excellent":ndviNow>.55?"Good":ndviNow>.4?"Fair":"Poor");
+  const cond=(harvestCrops.includes(cropKey)&&atHarvest)?(ndviNow<.35?"Ready to Harvest":"Ripening"):(ndviNow>.7?"Excellent":ndviNow>.55?"Good":ndviNow>.4?"Fair":"Poor");
   const condCls=cond==="Excellent"||cond==="Good"||cond==="Ready to Harvest"?"g":cond==="Fair"||cond==="Ripening"?"w":"b";
   const wx=MONTHLY_WX[month];
 
@@ -419,7 +421,7 @@ function renderPanel(p,pid){
   else if(p.conf<80)recs.push({t:"w",icon:"🟡",h:"Medium confidence — "+p.conf+"%",b:"Prediction may be uncertain. Could be mixed cropping or atypical growth pattern."});
   if(cond==="Excellent"||cond==="Good")recs.push({t:"g",icon:"🟢",h:"Healthy crop",b:"Vegetation indices indicate good canopy development. No signs of stress detected from satellite data."});
   // Soil moisture recommendation removed - was based on fake calendar lookup, not real data
-  if(si>=4&&si<6)recs.push({t:"w",icon:"🟡",h:"Harvest window approaching",b:p.crop+" is approaching harvest. Monitor grain/seed moisture. Estimated window: "+(HARVEST[p.crop]||"Aug–Sep")+"."});
+  if(si>=4&&si<6)recs.push({t:"w",icon:"🟡",h:"Harvest window approaching",b:p.crop+" is approaching harvest. Monitor grain/seed moisture. Estimated window: "+(HARVEST[cropKey]||"Aug–Sep")+"."});
   if(si>=6)recs.push({t:"w",icon:"🟡",h:"Ready to harvest",b:"Crop is at or near harvest stage. Plan logistics and check weather window."});
   recs.push({t:"g",icon:"🟢",h:"Next satellite pass",b:"Sentinel-2 revisit in ~4 days. Updated NDVI and vegetation maps will be available."});
 
@@ -434,7 +436,7 @@ function renderPanel(p,pid){
     +matchCard
     +'<div class="sc"><div class="sl">Growth Stage</div><div class="sv" style="font-size:14px">'+stages[si]+'</div><div class="ss2">Stage '+(si+1)+"/"+stages.length+'</div></div>'
     +'<div class="sc"><div class="sl">Condition</div><div class="sv iv '+condCls+'" style="font-size:14px">'+cond+'</div><div class="ss2">'+(ndviNow>.6?"Dense canopy":"Developing canopy")+'</div></div>'
-    +'<div class="sc"><div class="sl">Harvest Window</div><div class="sv" style="font-size:13px">'+(HARVEST[p.crop]||"Aug–Sep")+'</div><div class="ss2" style="font-size:10px">Est. accuracy: ±3 days (weather dependent)</div></div>'
+    +'<div class="sc"><div class="sl">Harvest Window</div><div class="sv" style="font-size:13px">'+(HARVEST[cropKey]||"Aug–Sep")+'</div><div class="ss2" style="font-size:10px">Est. accuracy: ±3 days (weather dependent)</div></div>'
     +'<div class="sc"><div class="sl">Field Area</div><div class="sv">'+p.area+' ha</div><div class="ss2">~'+Math.round(p.area*2.47)+' acres</div></div>'
     +'</div>'
     +'<div class="sth">Growth Timeline</div><div class="tl">'+stHTML+'</div>'
